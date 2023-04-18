@@ -1,12 +1,10 @@
 ---
-output: 
-  github_document :
-    toc: true
+output: github_document  
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SynAnthrop <img src="./Figure/SynAnthrop_logo.png" align="right" alt="" width="200" />
+# SynAnthrop : a R package to analyse species distribution along anthropisation gradient <img src="./Figure/SynAnthrop_logo.png" align="right" alt="" width="200" />
 
 SynAnthrop is a R package developed to assess the sensibility of species and communities to anthropisation from occurrence data.
 
@@ -89,19 +87,19 @@ The SSI function produce three main data.frame :
 
 * `[[1]]` the first data.frame is a short summary table (one line per species) with the mean of all effect size and the corresponding index (range between 1 to 10) for each resolution. The number of runs used to calculate the mean effect size are also specified.
 
-```{r warning=FALSE, message=FALSE, results = 'hide'}
+```{r warning=FALSE, message=FALSE}
 head(ssi_results[[1]])
 ```
 
 * `[[2]]` the second data.frame compile all the raw results, i.e all the effect size assessed per run, with corresponding information provided by the function cohen_d (rstatix package) ; n1 and n2 correspond to the number of occurrence compare (n1 for the null distribution and n2 for observed data).
 
-```{r warning=FALSE, message=FALSE, results = 'hide'}
+```{r warning=FALSE, message=FALSE}
 head(ssi_results[[2]])
 ```
 
 * `[[3]]` the third data.frame archives all the occurrence randomly drawn to assess scores.
 
-```{r warning=FALSE, message=FALSE, results = 'hide'}
+```{r warning=FALSE, message=FALSE}
 head(ssi_results[[3]])
 ```
 
@@ -178,6 +176,10 @@ ggplot() +
   theme_void() +
   theme(legend.position="none")
 ```
+
+## Application
+
+The scores may be then calculate for assemblages. 
 
 ## Credits
 

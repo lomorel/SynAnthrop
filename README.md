@@ -1,37 +1,7 @@
 
-- <a href="#synanthrop-" id="toc-synanthrop-">SynAnthrop
-  <img src="./Figure/SynAnthrop_logo.png" align="right" alt="" width="200" /></a>
-  - <a href="#workflow-" id="toc-workflow-">Workflow
-    <img src="./Figure/Synanthrop_workflow.png" /></a>
-  - <a href="#dependencies" id="toc-dependencies">Dependencies</a>
-    - <a href="#loading-packages-and-function"
-      id="toc-loading-packages-and-function">Loading packages and function</a>
-    - <a href="#data" id="toc-data">Data</a>
-  - <a href="#the-species-synanthropy-index-function"
-    id="toc-the-species-synanthropy-index-function">The Species Synanthropy
-    Index function</a>
-    - <a href="#an-example-with-amphibian-populations-in-western-france"
-      id="toc-an-example-with-amphibian-populations-in-western-france">An
-      example with amphibian populations in western France</a>
-    - <a href="#usage" id="toc-usage">Usage</a>
-    - <a href="#arguments" id="toc-arguments">Arguments</a>
-    - <a href="#example-and-results" id="toc-example-and-results">Example and
-      results</a>
-  - <a href="#visualise-and-analyse-the-ssi-results"
-    id="toc-visualise-and-analyse-the-ssi-results">Visualise and analyse the
-    SSI results</a>
-    - <a href="#score-distribution-within-the-studied-taxa"
-      id="toc-score-distribution-within-the-studied-taxa">Score distribution
-      within the studied taxa</a>
-    - <a href="#resolution-comparison"
-      id="toc-resolution-comparison">Resolution comparison</a>
-    - <a href="#distribution-map" id="toc-distribution-map">Distribution
-      map</a>
-  - <a href="#credits" id="toc-credits">Credits</a>
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SynAnthrop <img src="./Figure/SynAnthrop_logo.png" align="right" alt="" width="200" />
+# SynAnthrop : a R package to analyse species distribution along anthropisation gradient <img src="./Figure/SynAnthrop_logo.png" align="right" alt="" width="200" />
 
 SynAnthrop is a R package developed to assess the sensibility of species
 and communities to anthropisation from occurrence data.
@@ -169,6 +139,14 @@ The SSI function produce three main data.frame :
 head(ssi_results[[1]])
 ```
 
+    ##                  Species        mean nRun Index Resolution
+    ## 1    Alytes obstetricans  0.01302928   50     2        100
+    ## 2          Bufo spinosus  0.05701674   50     1        100
+    ## 3      Epidalea calamita -0.51850959   50    10        100
+    ## 4           Hyla arborea  0.01526627   50     2        100
+    ## 5 Ichthyosaura alpestris -0.05301222   50     3        100
+    ## 6 Lissotriton helveticus -0.10195841   50     4        100
+
 - `[[2]]` the second data.frame compile all the raw results, i.e all the
   effect size assessed per run, with corresponding information provided
   by the function cohen_d (rstatix package) ; n1 and n2 correspond to
@@ -179,12 +157,35 @@ head(ssi_results[[1]])
 head(ssi_results[[2]])
 ```
 
+    ##                  Species   .y. group1 group2       effsize   n1   n2  magnitude
+    ## 1    Alytes obstetricans value   Null    Obs  0.0985020930  220  220 negligible
+    ## 2          Bufo spinosus value   Null    Obs  0.0575906703 2012 2011 negligible
+    ## 3      Epidalea calamita value   Null    Obs -0.4548042981   95   95      small
+    ## 4           Hyla arborea value   Null    Obs  0.0008755569  689  689 negligible
+    ## 5 Ichthyosaura alpestris value   Null    Obs -0.1995365517  237  237 negligible
+    ## 6 Lissotriton helveticus value   Null    Obs -0.1418401328 1197 1197 negligible
+    ##   Run Resolution
+    ## 1   1        100
+    ## 2   1        100
+    ## 3   1        100
+    ## 4   1        100
+    ## 5   1        100
+    ## 6   1        100
+
 - `[[3]]` the third data.frame archives all the occurrence randomly
   drawn to assess scores.
 
 ``` r
 head(ssi_results[[3]])
 ```
+
+    ##    Cell             Species        x       y variable Resolution
+    ## 1  9125 Triturus marmoratus 228047.6 6764984     Null        100
+    ## 2  7062 Triturus marmoratus 330047.6 6792984     Null        100
+    ## 3 10501 Triturus marmoratus 262047.6 6746984     Null        100
+    ## 4  5769 Triturus marmoratus 160047.6 6808984     Null        100
+    ## 5  3383 Triturus marmoratus 220047.6 6840984     Null        100
+    ## 6  5495 Triturus marmoratus 216047.6 6812984     Null        100
 
 ## Visualise and analyse the SSI results
 
@@ -264,6 +265,10 @@ ggplot() +
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+## Application
+
+The scores may be then calculate for assemblages.
 
 ## Credits
 
