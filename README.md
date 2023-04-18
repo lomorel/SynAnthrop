@@ -166,9 +166,8 @@ ggplot(sub_effsize_res, aes(x = reorder(Species, -effsize), y = -effsize, fill =
   theme_bw()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
-
-### Resolution comparison
+![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- --> \###
+Resolution comparison
 
 ``` r
 mean_index_by_reso <- data.frame(sp_ssi %>%
@@ -186,13 +185,13 @@ newggslopegraph(dataframe = mean_index_by_reso,
                 Caption = NULL)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
-
-## Credits
+![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> \## Credits
 
 Package and tutorial written by Loïs Morel, Lab. DECOD, Institut Agro,
 Rennes, France.
 
 Citations:
 
-    Morel L. 2023. SynAnthrop: Species distribution and sensitivity to anthropisation, R package version 0.1.1,         https://github.com/lomorel/SynAnthrop
+- Morel L. 2023. SynAnthrop: Species distribution and sensitivity to
+  anthropisation, R package version 0.1.1,
+  <https://github.com/lomorel/SynAnthrop>

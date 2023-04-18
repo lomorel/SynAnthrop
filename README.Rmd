@@ -39,7 +39,7 @@ ras_raw <- raster("./Data/CartNat_Bzh.tif")#raster
 
 The map used here is the French Naturalness Map, developed by Guetté et al.(2021) https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf). 
 
-```{r warning=FALSE, message=FALSE}
+```{r warning=FALSE, message=FALSE, fig.width=10}
 # create SpatRaster (can also do `x <- rast(f)`
 rast_to_plot <- rast(ras_raw)
 
@@ -127,7 +127,6 @@ ggplot(sub_effsize_res, aes(x = reorder(Species, -effsize), y = -effsize, fill =
   theme_bw()
 
 ```
-
 ### Resolution comparison
 ```{r warning=FALSE, message=FALSE}
 
@@ -145,14 +144,13 @@ newggslopegraph(dataframe = mean_index_by_reso,
                 SubTitle = NULL,
                 Caption = NULL)
 ```
-
 ## Credits
 
 Package and tutorial written by Loïs Morel, Lab. DECOD, Institut Agro, Rennes, France.
 
 Citations:
 
-    Morel L. 2023. SynAnthrop: Species distribution and sensitivity to anthropisation, R package version 0.1.1,         https://github.com/lomorel/SynAnthrop
+* Morel L. 2023. SynAnthrop: Species distribution and sensitivity to anthropisation, R package version 0.1.1,         https://github.com/lomorel/SynAnthrop
 
 
 
