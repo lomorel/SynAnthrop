@@ -1,5 +1,33 @@
 
-true
+- <a href="#synanthrop-" id="toc-synanthrop-">SynAnthrop
+  <img src="./Figure/SynAnthrop_logo.png" align="right" alt="" width="200" /></a>
+  - <a href="#workflow-" id="toc-workflow-">Workflow
+    <img src="./Figure/Synanthrop_workflow.png" /></a>
+  - <a href="#dependencies" id="toc-dependencies">Dependencies</a>
+    - <a href="#loading-packages-and-function"
+      id="toc-loading-packages-and-function">Loading packages and function</a>
+    - <a href="#data" id="toc-data">Data</a>
+  - <a href="#the-species-synanthropy-index-function"
+    id="toc-the-species-synanthropy-index-function">The Species Synanthropy
+    Index function</a>
+    - <a href="#an-example-with-amphibian-populations-in-western-france"
+      id="toc-an-example-with-amphibian-populations-in-western-france">An
+      example with amphibian populations in western France</a>
+    - <a href="#usage" id="toc-usage">Usage</a>
+    - <a href="#arguments" id="toc-arguments">Arguments</a>
+    - <a href="#example-and-results" id="toc-example-and-results">Example and
+      results</a>
+  - <a href="#visualise-and-analyse-the-ssi-results"
+    id="toc-visualise-and-analyse-the-ssi-results">Visualise and analyse the
+    SSI results</a>
+    - <a href="#score-distribution-within-the-studied-taxa"
+      id="toc-score-distribution-within-the-studied-taxa">Score distribution
+      within the studied taxa</a>
+    - <a href="#resolution-comparison"
+      id="toc-resolution-comparison">Resolution comparison</a>
+    - <a href="#distribution-map" id="toc-distribution-map">Distribution
+      map</a>
+  - <a href="#credits" id="toc-credits">Credits</a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -8,18 +36,38 @@ true
 SynAnthrop is a R package developed to assess the sensibility of species
 and communities to anthropisation from occurrence data.
 
+The method allows to describe the ecological affinities of species and
+groups in a simple, reproducible, multi-scale and less subjective way
+than with expert assessments.
+
+The principle of the analysis is based on the comparison of the observed
+distribution of species along a gradient of anthropisation within a
+territory, with a distribution that would be expected if anthropisation
+had no effect on this distribution (null distribution). This null
+distribution is defined by species, taking into account its distribution
+(points are randomly generated within its range) and taking into account
+the survey intensity per site.
+
 ## Workflow <img src="./Figure/Synanthrop_workflow.png" />
 
-Principle: the analysis is based on the cross-referencing of
-georeferenced occurrence data and a map describing the gradient to be
-studied (from which values are extracted at the desired resolution).
-After a selection of data by species (2), a random selection of sites in
-the range and according to the sampling effort is made (n = observed
-occurrences). The effect (in this case of anthropisation) is measured by
-evaluating the effect size between these 2 distributions (3). The
-operation is repeated 500 times (4). Synanthropy scores (from 1 to 10)
-are assigned to each species from the average of the differences between
-the null and observed distributions (5).
+2 types of data are needed as input (1): georeferenced occurrence data
+and a map describing the gradient to be studied (from which we extract
+values at the desired resolution). After a selection of data by species
+(2), a random selection of sites in the range and according to the
+sampling effort is made (n = observed occurrences). The effect (in this
+case of anthropisation) is measured by evaluating the effect size
+between these 2 distributions (3). The operation is repeated 500 times
+(4). Synanthropy scores (from 1 to 10) are assigned to each species from
+the average of the differences between the null and observed
+distributions (5).
+
+These scores can then be used at the community scale to estimate the
+overall sensitivity of assemblages to land use change. These average
+scores are complementary to anthropisation maps whose information must
+be considered as potential (with cases where the maps present values \>
+to the scores when sensitive species are not detected and cases where
+the maps present values \< to the scores when in reality some
+populations of sensitive species have maintained themselves locally).
 
 ## Dependencies
 
@@ -31,16 +79,16 @@ Packages <- c("tidyverse", "raster","scales","sf","ks","tabularaster", "terra", 
 
 lapply(Packages, library, character.only = TRUE) # to load
 
-source("./R/Species_Synanthropisation_Index_function.R")
+source("./R/Species_Synanthropy_Index_function.R")
 # devtools::install_github("/lomorel/SynAnthrop")
 ```
 
 ### Data
 
-Two types of data are required to run the Species Synanthropisation
-Index (SSI): (i) a database of species occurrences, with XY coordinates
-and corresponding sampling dates, and (ii) a raster describing the
-spatial gradient of anthropisation of the region to be analyse.
+Two types of data are required to run the Species Synanthropy Index
+(SSI): (i) a database of species occurrences, with XY coordinates and
+corresponding sampling dates, and (ii) a raster describing the spatial
+gradient of anthropisation of the region to be analyse.
 
 ``` r
 sp_by_occ_raw <- read.table("./Data/amphibian_all_2154_to_R.csv", sep=";", h=T)
@@ -55,16 +103,17 @@ head(sp_by_occ_raw)
     ## 5 Salamandra salamandra 2015         1 259519 6807029
     ## 6       Pelophylax spp. 2015         1 261357 6806526
 
+Note that data were filter to containt only recent years (2010-2021) in
+order to be coherent with information compile in used maps.
+
 ``` r
 ras_raw <- raster("./Data/CartNat_Bzh.tif")#raster
 ```
 
 The map used here is the French Naturalness Map, developed by Guetté et
-al.(2021)
-<https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf>).
+al.(2021)\[<https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf>)\].
 
 ``` r
-# create SpatRaster (can also do `x <- rast(f)`
 rast_to_plot <- rast(ras_raw)
 
 sp_map <- st_as_sf(sp_by_occ_raw, coords = c("X", "Y"), crs = 2154)
@@ -73,12 +122,15 @@ sp_map$Year <- as.integer(sp_map$Year)
 ggplot() + 
   geom_spatraster(data = rast_to_plot) +
   geom_sf(data = sp_map, aes(color = Year)) +
-  scale_fill_whitebox_c(palette = "muted")
+  scale_colour_gradient(low = "orange", high = "red") +
+  scale_fill_whitebox_c(palette = "muted", direction=-1)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-## Running the SSI function
+## The Species Synanthropy Index function
+
+### An example with amphibian populations in western France
 
 ### Usage
 
@@ -100,10 +152,10 @@ resolutions can be evaluated simultaneously.
 - `- threshold`: this argument allows to fix the threshold of species
   occurrences under it species will be not account.
 
-### An example with amphibian populations in western France
+### Example and results
 
 ``` r
-ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = 200 , sim = 2, threshold = 30)
+ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200) , sim = 50, threshold = 30)
 ```
 
 The SSI function produce three main data.frame :
@@ -134,7 +186,7 @@ head(ssi_results[[2]])
 head(ssi_results[[3]])
 ```
 
-## Visualising SSI results
+## Visualise and analyse the SSI results
 
 ### Score distribution within the studied taxa
 
@@ -147,7 +199,11 @@ mean_ssi_by_resolution <-   data.frame(sp_ssi %>%
                                       summarise(Index = mean(Index), n = n()))
 
 effsize_res <- ssi_results [[2]]
+```
 
+Here we selected only data for the resolution 200.
+
+``` r
 # then scale by scale
 sub_effsize_res <- subset(effsize_res, Resolution == "200")
 mean_ssi_by_resolution <- subset(mean_ssi_by_resolution, Resolution == "200")
@@ -166,8 +222,9 @@ ggplot(sub_effsize_res, aes(x = reorder(Species, -effsize), y = -effsize, fill =
   theme_bw()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- --> \###
-Resolution comparison
+![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+### Resolution comparison
 
 ``` r
 mean_index_by_reso <- data.frame(sp_ssi %>%
@@ -180,12 +237,35 @@ newggslopegraph(dataframe = mean_index_by_reso,
                 Resolution,
                 Index,
                 Grouping = Species,
-                Title = "Amphibian",
+                Title = "Synanthropy scores for amphibian species in western France",
                 SubTitle = NULL,
                 Caption = NULL)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> \## Credits
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+### Distribution map
+
+``` r
+sub_distri <- subset(ssi_results[[3]], Resolution == "200")
+sub_distri_obs <- subset(sub_distri, variable  == "Obs")
+distri <- rbind(sub_distri_obs, sample_n(subset(sub_distri, variable  == "Null" ), nrow(sub_distri_obs)))
+distri <- sf_transform_xy (distri, 4326, 2154)
+
+ggplot() + 
+  geom_point(data = subset(distri, variable == "Null"), aes(x = x, y = y, color = variable), 
+             size = 1.5, colour = "#ff7553",alpha = 1/2) +
+  geom_point(data = subset(distri, variable == "Obs"), aes(x = x, y = y, color = variable), 
+             size = 1.5, colour = "#d4482c",alpha = 1/2) +
+  theme(axis.title.x=element_blank(),axis.title.y=element_blank()) +
+  facet_wrap(. ~ Species) +
+  theme_void() +
+  theme(legend.position="none")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+## Credits
 
 Package and tutorial written by Loïs Morel, Lab. DECOD, Institut Agro,
 Rennes, France.
