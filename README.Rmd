@@ -1,5 +1,6 @@
 ---
 output: github_document  
+always_allow_html: yes
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -22,7 +23,8 @@ These scores can then be used at the community scale to estimate the overall sen
 ## Dependencies
 ### Loading packages and function
 ```{r Packages, warning = FALSE, message = FALSE, results = 'hide'}
-Packages <- c("tidyverse", "raster","scales","sf","ks","tabularaster", "terra", "tidyterra", "CGPfunctions")
+Packages <- c("tidyverse", "raster","scales","sf","ks","tabularaster", "terra", "tidyterra",
+              "CGPfunctions", "mapview","RColorBrewer")
 # install.packages(Packages) # if needed
 
 lapply(Packages, library, character.only = TRUE) # to load
@@ -180,6 +182,42 @@ ggplot() +
 ## Application
 
 The scores may be then calculate for assemblages. 
+
+```{r warning=FALSE, message=FALSE, fig.width=10}
+ex_com <- read.table("./Data/Amphibian_commnity_MNIE.csv", sep=";", h=T)
+
+sp_ssi100 <- subset(sp_ssi, Resolution == "100")
+
+ex_com_df <- merge(ex_com, sp_ssi100[,c("Species","Index")], by = "Species")
+
+ex_com_df1 <- data.frame(ex_com_df %>%
+                            group_by(Site, Years, X, Y) %>%
+                            summarise(Richness = n_distinct(Species)))
+
+ex_com_df2 <-   data.frame(ex_com_df %>%
+                                      group_by(Site, Years) %>%
+                                      summarise(Mean_Index = round(mean(Index), 2)))
+
+ex_com_df3 <-   data.frame(ex_com_df %>%
+                                      group_by(Site, Years) %>%
+                                      summarise(CWM = round(weighted.mean(Index, Abundance), 2)))
+
+ex_com_df <- merge(ex_com_df1, ex_com_df2, by = c("Site", "Years")) 
+ex_com_df <- merge(ex_com_df, ex_com_df3, by = c("Site", "Years"))
+
+ex_com_df_map <- st_as_sf(ex_com_df, coords = c("X", "Y"), crs = 2154)
+
+#Plot the map
+ex_com_df_map2 <- filter(ex_com_df_map, Richness > 1)
+
+crs(ras_raw) <- "+init=epsg:2154"
+
+m2 <- mapview(ex_com_df_map2, zcol = "CWM", col.regions = brewer.pal(10,"YlGn"))
+m1 <- mapview(ras_raw, col.regions = brewer.pal(10,"Spectral"))
+
+m2 + m1
+
+```
 
 ## Credits
 
