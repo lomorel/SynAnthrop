@@ -15,16 +15,17 @@ The principle of the analysis is based on the comparison of the observed distrib
 
 ## Workflow <img src="./Figure/Synanthrop_workflow.png" />
 
-2 types of data are needed as input (1): georeferenced occurrence data and a map describing the gradient to be studied (from which we extract values at the desired resolution).
-After a selection of data by species (2), a random selection of sites in the range and according to the sampling effort is made (n = observed occurrences). The effect (in this case of anthropisation) is measured by evaluating the effect size between these 2 distributions (3). The operation is repeated 500 times (4). Synanthropy scores (from 1 to 10) are assigned to each species from the average of the differences between the null and observed distributions (5).
+Two types of data are needed as input (1): georeferenced occurrence data and a map describing the gradient to be studied (from which we extract values at the desired resolution).
+After a selection of data by species (2), a random selection of sites in the range and according to the sampling effort is made (n = observed occurrences). The gradient effect (of anthropisation in our case) is measured by evaluating the effect size between these 2 distributions (3). The operation is repeated 500 times (4). Synanthropy scores (from 1 to 10) are assigned to each species from the average of the differences between the null and observed distributions (5).
 
-These scores can then be used at the community scale to estimate the overall sensitivity of assemblages to land use change. These average scores are complementary to anthropisation maps whose information must be considered as potential (with cases where the maps present values > to the scores when sensitive species are not detected and cases where the maps present values < to the scores when in reality some populations of sensitive species have maintained themselves locally).
+These scores can then be used to identify species, communities, and related habitats that require significant conservation and restoration effort. They are complementary to other existing prioritisation indices such as red lists, rarity or specialization degrees.
+
 
 ## Dependencies
 ### Loading packages and function
 ```{r Packages, warning = FALSE, message = FALSE, results = 'hide'}
 Packages <- c("tidyverse", "raster","scales","sf","ks","tabularaster", "terra", "tidyterra",
-              "CGPfunctions", "mapview","RColorBrewer")
+              "CGPfunctions", "RColorBrewer")
 # install.packages(Packages) # if needed
 
 lapply(Packages, library, character.only = TRUE) # to load
@@ -48,7 +49,7 @@ Note that data were filter to containt only recent years (2010-2021) in order to
 ras_raw <- raster("./Data/CartNat_Bzh.tif")#raster
 ```
 
-The map used here is the French Naturalness Map, developed by Guetté et al.(2021)[https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf)]. 
+The map used here is the French Naturalness Map, developed by [Guetté et al.(2021)](https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf).
 
 ```{r warning=FALSE, message=FALSE, fig.width=10}
 rast_to_plot <- rast(ras_raw)
@@ -161,6 +162,8 @@ newggslopegraph(dataframe = mean_index_by_reso,
 
 ### Distribution map
 
+Plotting these maps allows to visualise the locations of observations and of randomly selected sites.
+
 ```{r warning=FALSE, message=FALSE, fig.width=10}
 
 sub_distri <- subset(ssi_results[[3]], Resolution == "200")
@@ -170,24 +173,30 @@ distri <- sf_transform_xy (distri, 4326, 2154)
 
 ggplot() + 
   geom_point(data = subset(distri, variable == "Null"), aes(x = x, y = y, color = variable), 
-             size = 1.5, colour = "#ff7553",alpha = 1/2) +
+             size = 1.5, colour = "#ff6600",alpha = 1/2) +
   geom_point(data = subset(distri, variable == "Obs"), aes(x = x, y = y, color = variable), 
-             size = 1.5, colour = "#d4482c",alpha = 1/2) +
+             size = 1.5, colour = "#660099",alpha = 1/2) +
   theme(axis.title.x=element_blank(),axis.title.y=element_blank()) +
   facet_wrap(. ~ Species) +
   theme_void() +
   theme(legend.position="none")
 ```
 
-## Application
+## Application : an example with amphibian communities survey in ponds
 
-The scores may be then calculate for assemblages. 
+The scores may then be used at the community scale to estimate the overall sensitivity of assemblages to land use change. These average scores are complementary to anthropisation maps whose information must be considered as potential (with cases where the maps present values > to the scores when sensitive species are not detected and cases where the maps present values < to the scores when in reality some populations of sensitive species have maintained themselves locally).
+
+Here we test the scores with data of amphibian communities surveyed in western France (Rennes) between 2000 and 2010
+
+### Data cooking
 
 ```{r warning=FALSE, message=FALSE, fig.width=10}
 ex_com <- read.table("./Data/Amphibian_commnity_MNIE.csv", sep=";", h=T)
 
+#Subset to the finest resolution
 sp_ssi100 <- subset(sp_ssi, Resolution == "100")
 
+#Subset to the finest resolution
 ex_com_df <- merge(ex_com, sp_ssi100[,c("Species","Index")], by = "Species")
 
 ex_com_df1 <- data.frame(ex_com_df %>%
@@ -205,19 +214,36 @@ ex_com_df3 <-   data.frame(ex_com_df %>%
 ex_com_df <- merge(ex_com_df1, ex_com_df2, by = c("Site", "Years")) 
 ex_com_df <- merge(ex_com_df, ex_com_df3, by = c("Site", "Years"))
 
+```
+
+Here, we see the summary table with species richness, unweighted community index and the community (abundance-)weighted mean (CWM).
+
+```{r warning=FALSE, message=FALSE, fig.width=10}
+head(ex_com_df)
+```
+
+### Map the results
+
+```{r warning=FALSE, message=FALSE, fig.width=10}
+ex_com <- read.table("./Data/Amphibian_commnity_MNIE.csv", sep=";", h=T)
 ex_com_df_map <- st_as_sf(ex_com_df, coords = c("X", "Y"), crs = 2154)
+
 
 #Plot the map
 ex_com_df_map2 <- filter(ex_com_df_map, Richness > 1)
 
-crs(ras_raw) <- "+init=epsg:2154"
+rast_to_plot2 <- crop(rast_to_plot, ex_com_df_map2)
 
-m2 <- mapview(ex_com_df_map2, zcol = "CWM", col.regions = brewer.pal(10,"YlGn"))
-m1 <- mapview(ras_raw, col.regions = brewer.pal(10,"Spectral"))
-
-m2 + m1
+ggplot() + 
+  geom_spatraster(data = rast_to_plot2, alpha = 0.4) +
+  geom_sf(data = ex_com_df_map2, aes(color = CWM, size = Richness)) +
+  scale_colour_gradient(low = "yellow", high = "darkgreen") +
+  scale_fill_whitebox_c(palette = "muted", direction=-1) +
+  ggtitle("Amphibian communities in ponds ecosystems") 
 
 ```
+
+Here we identify the ponds that have less synanthropic assemblages and are therefore potentially more sensitive to urbanisation and intensified land-use. We also distinguish the ponds presenting rather synanthropic assemblages. It is interesting to note that these results contrast in part with the map, illustrating the complementarity of the two approaches.
 
 ## Credits
 
