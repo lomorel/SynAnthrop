@@ -38,17 +38,33 @@ such as red lists, rarity or specialization degrees.
 
 ## Dependencies
 
-### Loading packages and function
+### Loading packages and function associated to the SynAnthrop R package
 
 ``` r
-Packages <- c("tidyverse", "raster","scales","sf","ks","tabularaster", "terra", "tidyterra",
-              "CGPfunctions", "RColorBrewer")
-# install.packages(Packages) # if needed
-
-lapply(Packages, library, character.only = TRUE) # to load
+Packages_fund <- c("tidyverse",# to cook data 
+              "raster", "sf", # for spatial data
+              "ks", # to use kernel density to estimate sampling effort
+              "rstatix", "scales" # to assess effect size
+              )
 
 source("./R/Species_Synanthropy_Index_function.R")
 # devtools::install_github("/lomorel/SynAnthrop")
+```
+
+### Complement packages to applied the following example
+
+``` r
+Packages_rel <- c("ggplot2", "terra","tidyterra","CGPfunctions", "RColorBrewer")
+```
+
+### Load all the packages
+
+``` r
+Packages <- c(Packages_fund,Packages_rel)
+  
+# install.packages(Packages) # if needed
+
+lapply(Packages, library, character.only = TRUE) # to load
 ```
 
 ### Data
@@ -71,7 +87,7 @@ head(sp_by_occ_raw)
     ## 5 Salamandra salamandra 2015         1 259519 6807029
     ## 6       Pelophylax spp. 2015         1 261357 6806526
 
-Note that data were filter to containt only recent years (2010-2021) in
+Note that data were filter to contain only recent years (2010-2021) in
 order to be coherent with information compile in used maps.
 
 ``` r
@@ -80,6 +96,8 @@ ras_raw <- raster("./Data/CartNat_Bzh.tif")#raster
 
 The map used here is the French Naturalness Map, developed by [Guetté et
 al.(2021)](https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf).
+The raster layers could be download
+[here](https://uicn.fr/CartNat/CartNat_Donnees/).
 
 ``` r
 rast_to_plot <- rast(ras_raw)
@@ -91,10 +109,10 @@ ggplot() +
   geom_spatraster(data = rast_to_plot) +
   geom_sf(data = sp_map, aes(color = Year)) +
   scale_colour_gradient(low = "orange", high = "red") +
-  scale_fill_whitebox_c(palette = "muted", direction=-1)
+  scale_fill_whitebox_c(palette = "muted", direction= -1)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ## The Species Synanthropy Index function
 
@@ -108,9 +126,9 @@ resolutions can be evaluated simultaneously.
 
 ### Arguments
 
-- `- resolution`: his argument allows to test several resolutions. To do
-  this, specify for each resolution you want to test (the value is the
-  number of raster cells aggregated to compile species occurrences).
+- `- resolution`: this argument allows to test several resolutions. To
+  do this, specify for each resolution you want to test (the value is
+  the number of raster cells aggregated to compile species occurrences).
 
 - `- sim`: this argument corresponds to the number of simulations to run
   to model the null distribution of occurrences under the assumption
@@ -123,7 +141,9 @@ resolutions can be evaluated simultaneously.
 ### Example and results
 
 ``` r
-ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200) , sim = 50, threshold = 30)
+ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200), sim = 50, threshold = 30)
+
+head(ssi_results)
 ```
 
 The SSI function produce three main data.frame :
@@ -137,13 +157,13 @@ The SSI function produce three main data.frame :
 head(ssi_results[[1]])
 ```
 
-    ##                  Species         mean nRun Index Resolution
-    ## 1    Alytes obstetricans  0.007796773   50     2        100
-    ## 2          Bufo spinosus  0.057358688   50     1        100
-    ## 3      Epidalea calamita -0.502315252   50    10        100
-    ## 4           Hyla arborea  0.012370339   50     2        100
-    ## 5 Ichthyosaura alpestris -0.034269308   50     3        100
-    ## 6 Lissotriton helveticus -0.098954661   50     4        100
+    ##                  Species        mean nRun Index Resolution
+    ## 1    Alytes obstetricans  0.01746624   50     2        100
+    ## 2          Bufo spinosus  0.05210600   50     2        100
+    ## 3      Epidalea calamita -0.48877355   50    10        100
+    ## 4           Hyla arborea  0.01479628   50     2        100
+    ## 5 Ichthyosaura alpestris -0.04402496   50     3        100
+    ## 6 Lissotriton helveticus -0.09571499   50     4        100
 
 - `[[2]]` the second data.frame compile all the raw results, i.e all the
   effect size assessed per run, with corresponding information provided
@@ -155,13 +175,13 @@ head(ssi_results[[1]])
 head(ssi_results[[2]])
 ```
 
-    ##                  Species   .y. group1 group2      effsize   n1   n2  magnitude
-    ## 1    Alytes obstetricans value   Null    Obs -0.053743289  220  220 negligible
-    ## 2          Bufo spinosus value   Null    Obs  0.057136020 2012 2011 negligible
-    ## 3      Epidalea calamita value   Null    Obs -0.584828096   95   95   moderate
-    ## 4           Hyla arborea value   Null    Obs -0.001765089  689  689 negligible
-    ## 5 Ichthyosaura alpestris value   Null    Obs -0.048397667  237  237 negligible
-    ## 6 Lissotriton helveticus value   Null    Obs -0.102106841 1197 1197 negligible
+    ##                  Species   .y. group1 group2     effsize   n1   n2  magnitude
+    ## 1    Alytes obstetricans value   Null    Obs  0.04686383  220  220 negligible
+    ## 2          Bufo spinosus value   Null    Obs  0.04723232 2012 2011 negligible
+    ## 3      Epidalea calamita value   Null    Obs -0.58410587   95   95   moderate
+    ## 4           Hyla arborea value   Null    Obs  0.03807707  689  689 negligible
+    ## 5 Ichthyosaura alpestris value   Null    Obs -0.05192229  237  237 negligible
+    ## 6 Lissotriton helveticus value   Null    Obs -0.10389539 1197 1197 negligible
     ##   Run Resolution
     ## 1   1        100
     ## 2   1        100
@@ -178,12 +198,12 @@ head(ssi_results[[3]])
 ```
 
     ##    Cell             Species        x       y variable Resolution
-    ## 1 10220 Triturus marmoratus 304047.6 6750984     Null        100
-    ## 2  7451 Triturus marmoratus 202047.6 6786984     Null        100
-    ## 3  6716 Triturus marmoratus 242047.6 6796984     Null        100
-    ## 4  5058 Triturus marmoratus 248047.6 6818984     Null        100
-    ## 5 11568 Triturus marmoratus 282047.6 6732984     Null        100
-    ## 6  3675 Triturus marmoratus 200047.6 6836984     Null        100
+    ## 1  1270 Triturus marmoratus 222047.6 6868984     Null        100
+    ## 2 10959 Triturus marmoratus 272047.6 6740984     Null        100
+    ## 3  6435 Triturus marmoratus 284047.6 6800984     Null        100
+    ## 4  2914 Triturus marmoratus 188047.6 6846984     Null        100
+    ## 5  3652 Triturus marmoratus 154047.6 6836984     Null        100
+    ## 6  5380 Triturus marmoratus 288047.6 6814984     Null        100
 
 ## Visualise and analyse the SSI results
 
@@ -204,8 +224,8 @@ Here we selected only data for the resolution 200.
 
 ``` r
 # then scale by scale
-sub_effsize_res <- subset(effsize_res, Resolution == "200")
-mean_ssi_by_resolution <- subset(mean_ssi_by_resolution, Resolution == "200")
+sub_effsize_res <- subset(effsize_res, Resolution == "100")
+mean_ssi_by_resolution <- subset(mean_ssi_by_resolution, Resolution == "100")
 
 sub_effsize_res <- merge(sub_effsize_res, mean_ssi_by_resolution, by = "Species")
 sub_effsize_res$Index <- as.factor(sub_effsize_res$Index)
@@ -221,7 +241,7 @@ ggplot(sub_effsize_res, aes(x = reorder(Species, -effsize), y = -effsize, fill =
   theme_bw()
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ### Resolution comparison
 
@@ -241,12 +261,13 @@ newggslopegraph(dataframe = mean_index_by_reso,
                 Caption = NULL)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Distribution map
 
 Plotting these maps allows to visualise the locations of observations
-and of randomly selected sites.
+and of randomly selected sites. Orange plots represent observation sites
+and purple ones the sites randomly selected.
 
 ``` r
 sub_distri <- subset(ssi_results[[3]], Resolution == "200")
@@ -265,7 +286,7 @@ ggplot() +
   theme(legend.position="none")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ## Application : an example with amphibian communities survey in ponds
 
@@ -297,30 +318,44 @@ ex_com_df1 <- data.frame(ex_com_df %>%
 
 ex_com_df2 <-   data.frame(ex_com_df %>%
                                       group_by(Site, Years) %>%
-                                      summarise(Mean_Index = round(mean(Index), 2)))
+                                      summarise(SCS = round(mean(Index), 2)))
 
 ex_com_df3 <-   data.frame(ex_com_df %>%
                                       group_by(Site, Years) %>%
-                                      summarise(CWM = round(weighted.mean(Index, Abundance), 2)))
+                                      summarise(SCSw = round(weighted.mean(Index, Abundance), 2)))
 
 ex_com_df <- merge(ex_com_df1, ex_com_df2, by = c("Site", "Years")) 
 ex_com_df <- merge(ex_com_df, ex_com_df3, by = c("Site", "Years"))
 ```
 
-Here, we see the summary table with species richness, unweighted
-community index and the community (abundance-)weighted mean (CWM).
+Here, we see the summary table with species richness, the Synanthropy
+Community Score (SCS), i.e. the mean of species scores and the
+Synanthropy Community Score weigthed by abundances (SCSw).
+
+Also, we integrated an equivalent of the [Floristic Quality
+Index](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1002/ecs2.2825)
+to account for variation of species richness, using the following
+formula :
+
+$$
+SCI = SCS(√ richness)
+$$
 
 ``` r
+ex_com_df$SCI <- round(ex_com_df$SCS*sqrt(ex_com_df$Richness), 2)
+
+ex_com_df$SCIw <- round(ex_com_df$SCSw*sqrt(ex_com_df$Richness), 2)
+
 head(ex_com_df)
 ```
 
-    ##       Site Years      X       Y Richness Mean_Index  CWM
-    ## 1   Site 1  2010 335076 6788565        3       3.33 3.20
-    ## 2  Site 10  2010 340610 6790480        5       3.40 3.40
-    ## 3 Site 100  2010 351549 6778613        5       3.40 3.67
-    ## 4 Site 101  2010 351550 6778573        3       3.33 3.33
-    ## 5 Site 102  2010 351577 6780908        3       2.67 3.54
-    ## 6 Site 103  2010 351641 6778430        4       2.25 2.84
+    ##       Site Years      X       Y Richness  SCS SCSw  SCI SCIw
+    ## 1   Site 1  2010 335076 6788565        3 3.33 3.20 5.77 5.54
+    ## 2  Site 10  2010 340610 6790480        5 3.40 3.40 7.60 7.60
+    ## 3 Site 100  2010 351549 6778613        5 3.60 3.78 8.05 8.45
+    ## 4 Site 101  2010 351550 6778573        3 3.33 3.33 5.77 5.77
+    ## 5 Site 102  2010 351577 6780908        3 2.67 3.54 4.62 6.13
+    ## 6 Site 103  2010 351641 6778430        4 2.25 2.84 4.50 5.68
 
 ### Map the results
 
@@ -328,21 +363,18 @@ head(ex_com_df)
 ex_com <- read.table("./Data/Amphibian_commnity_MNIE.csv", sep=";", h=T)
 ex_com_df_map <- st_as_sf(ex_com_df, coords = c("X", "Y"), crs = 2154)
 
-
 #Plot the map
-ex_com_df_map2 <- filter(ex_com_df_map, Richness > 1)
-
-rast_to_plot2 <- crop(rast_to_plot, ex_com_df_map2)
+rast_to_plot2 <- crop(rast_to_plot, ex_com_df_map)
 
 ggplot() + 
   geom_spatraster(data = rast_to_plot2, alpha = 0.4) +
-  geom_sf(data = ex_com_df_map2, aes(color = CWM, size = Richness)) +
+  geom_sf(data = ex_com_df_map, aes(color = SCIw, size = Richness)) +
   scale_colour_gradient(low = "yellow", high = "darkgreen") +
   scale_fill_whitebox_c(palette = "muted", direction=-1) +
   ggtitle("Amphibian communities in ponds ecosystems") 
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 Here we identify the ponds that have less synanthropic assemblages and
 are therefore potentially more sensitive to urbanisation and intensified
@@ -350,6 +382,26 @@ land-use. We also distinguish the ponds presenting rather synanthropic
 assemblages. It is interesting to note that these results contrast in
 part with the map, illustrating the complementarity of the two
 approaches.
+
+## References
+
+[Guetté A., Carruthers-Jones J. & Carver S. J. 2021. Projet CARTNAT -
+Cartographie de la Naturalité. Notice technique, UICN Comité Français,
+12 p.]()
+
+[Guetté A., Carruthers-Jones J., Godet L. & Robin M. 2018. « Naturalité
+» : concepts et méthodes appliqués à la conservation de la nature.
+Cybergeo: European Journal of Geography, document
+856.](https://journals.openedition.org/cybergeo/29140#toc)
+
+[Spyreas G. 2019. Floristic Quality Assessment: a critique, a defense,
+and a primer. Ecosphere, 10(8):
+e02825.](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1002/ecs2.2825)
+
+[Zinnen J., Spyreas G., Erdős L., Berg C. & Matthews J.W. 2020.
+Expert-based measures of human impact to vegetation. Applied Vegetation
+Science,
+24:e12523](https://onlinelibrary.wiley.com/doi/abs/10.1111/avsc.12523)
 
 ## Credits
 
