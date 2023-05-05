@@ -54,6 +54,10 @@ lapply(Packages, library, character.only = TRUE) # to load
 
 ```
 
+## The Species Synanthropy Index function
+
+### An example with amphibian populations in western France
+
 ### Data
 
 Two types of data are required to run the Species Synanthropy Index (SSI): (i) a database of species occurrences, with XY coordinates and corresponding sampling dates, and (ii) a raster describing the spatial gradient of anthropisation of the region to be analyse.
@@ -61,6 +65,7 @@ Two types of data are required to run the Species Synanthropy Index (SSI): (i) a
 ```{r warning=FALSE, message=FALSE}
 sp_by_occ_raw <- read.table("./Data/amphibian_all_2154_to_R.csv", sep=";", h=T)
 head(sp_by_occ_raw)
+
 ```
 
 Note that data were filter to contain only recent years (2010-2021) in order to be coherent with information compile in used maps.
@@ -87,14 +92,15 @@ ggplot() +
   scale_fill_whitebox_c(palette = "muted", direction= -1)
 ```
 
-## The Species Synanthropy Index function
-### An example with amphibian populations in western France
-
 ### Usage
 
 The function was designed to calculate synanthropy scores automatically from a data set (for a taxon, a territory and a period). Several resolutions can be evaluated simultaneously.
 
 ### Arguments
+
+* `- r`: the raster to be analysed.
+
+* `- x`: the species occurrences dataset ; Data must be structured as network format (one information by row : species, date, spatial coordinates), see above. 
 
 * `- resolution`: this argument allows to test several resolutions. To do this, specify for each resolution you want to test (the value is the number of raster cells aggregated to compile species occurrences).
 
@@ -105,7 +111,7 @@ The function was designed to calculate synanthropy scores automatically from a d
 ### Example and results
 
 ```{r warning=FALSE, message=FALSE, results = 'hide'}
-ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200), sim = 50, threshold = 30)
+ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200, 250), sim = 500, threshold = 30)
 
 head(ssi_results)
 
@@ -187,7 +193,7 @@ newggslopegraph(dataframe = mean_index_by_reso,
 ### Distribution map
 
 Plotting these maps allows to visualise the locations of observations and of randomly selected sites.
-Orange plots represent observation sites and purple ones the sites randomly selected.
+
 
 ```{r warning=FALSE, message=FALSE, fig.width=10}
 
@@ -206,6 +212,8 @@ ggplot() +
   theme_void() +
   theme(legend.position="none")
 ```
+
+Purple plots represent observation sites and orange ones the sites randomly selected.
 
 ## Application : an example with amphibian communities survey in ponds
 
