@@ -67,6 +67,10 @@ Packages <- c(Packages_fund,Packages_rel)
 lapply(Packages, library, character.only = TRUE) # to load
 ```
 
+## The Species Synanthropy Index function
+
+### An example with amphibian populations in western France
+
 ### Data
 
 Two types of data are required to run the Species Synanthropy Index
@@ -114,10 +118,6 @@ ggplot() +
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-## The Species Synanthropy Index function
-
-### An example with amphibian populations in western France
-
 ### Usage
 
 The function was designed to calculate synanthropy scores automatically
@@ -125,6 +125,12 @@ from a data set (for a taxon, a territory and a period). Several
 resolutions can be evaluated simultaneously.
 
 ### Arguments
+
+- `- r`: the raster to be analysed.
+
+- `- x`: the species occurrences dataset ; Data must be structured as
+  network format (one information by row : species, date, spatial
+  coordinates), see above.
 
 - `- resolution`: this argument allows to test several resolutions. To
   do this, specify for each resolution you want to test (the value is
@@ -141,7 +147,7 @@ resolutions can be evaluated simultaneously.
 ### Example and results
 
 ``` r
-ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200), sim = 50, threshold = 30)
+ssi_results <- ssi(r = ras_raw, x = sp_by_occ_raw, resolution = c(100, 200, 250), sim = 500, threshold = 30)
 
 head(ssi_results)
 ```
@@ -158,12 +164,12 @@ head(ssi_results[[1]])
 ```
 
     ##                  Species        mean nRun Index Resolution
-    ## 1    Alytes obstetricans  0.01746624   50     2        100
-    ## 2          Bufo spinosus  0.05210600   50     2        100
-    ## 3      Epidalea calamita -0.48877355   50    10        100
-    ## 4           Hyla arborea  0.01479628   50     2        100
-    ## 5 Ichthyosaura alpestris -0.04402496   50     3        100
-    ## 6 Lissotriton helveticus -0.09571499   50     4        100
+    ## 1    Alytes obstetricans  0.01505309  500     2        100
+    ## 2          Bufo spinosus  0.05567386  500     1        100
+    ## 3      Epidalea calamita -0.50631616  500    10        100
+    ## 4           Hyla arborea  0.02091115  500     2        100
+    ## 5 Ichthyosaura alpestris -0.03143930  500     3        100
+    ## 6 Lissotriton helveticus -0.09821513  500     4        100
 
 - `[[2]]` the second data.frame compile all the raw results, i.e all the
   effect size assessed per run, with corresponding information provided
@@ -176,12 +182,12 @@ head(ssi_results[[2]])
 ```
 
     ##                  Species   .y. group1 group2     effsize   n1   n2  magnitude
-    ## 1    Alytes obstetricans value   Null    Obs  0.04686383  220  220 negligible
-    ## 2          Bufo spinosus value   Null    Obs  0.04723232 2012 2011 negligible
-    ## 3      Epidalea calamita value   Null    Obs -0.58410587   95   95   moderate
-    ## 4           Hyla arborea value   Null    Obs  0.03807707  689  689 negligible
-    ## 5 Ichthyosaura alpestris value   Null    Obs -0.05192229  237  237 negligible
-    ## 6 Lissotriton helveticus value   Null    Obs -0.10389539 1197 1197 negligible
+    ## 1    Alytes obstetricans value   Null    Obs  0.06662700  220  220 negligible
+    ## 2          Bufo spinosus value   Null    Obs  0.06571214 2012 2011 negligible
+    ## 3      Epidalea calamita value   Null    Obs -0.47073556   95   95      small
+    ## 4           Hyla arborea value   Null    Obs  0.02799396  689  689 negligible
+    ## 5 Ichthyosaura alpestris value   Null    Obs  0.08570237  237  237 negligible
+    ## 6 Lissotriton helveticus value   Null    Obs -0.05569967 1197 1197 negligible
     ##   Run Resolution
     ## 1   1        100
     ## 2   1        100
@@ -198,12 +204,12 @@ head(ssi_results[[3]])
 ```
 
     ##    Cell             Species        x       y variable Resolution
-    ## 1  1270 Triturus marmoratus 222047.6 6868984     Null        100
-    ## 2 10959 Triturus marmoratus 272047.6 6740984     Null        100
-    ## 3  6435 Triturus marmoratus 284047.6 6800984     Null        100
-    ## 4  2914 Triturus marmoratus 188047.6 6846984     Null        100
-    ## 5  3652 Triturus marmoratus 154047.6 6836984     Null        100
-    ## 6  5380 Triturus marmoratus 288047.6 6814984     Null        100
+    ## 1  6458 Triturus marmoratus 330047.6 6800984     Null        100
+    ## 2  4970 Triturus marmoratus 374047.6 6820984     Null        100
+    ## 3  8363 Triturus marmoratus 214047.6 6774984     Null        100
+    ## 4 11875 Triturus marmoratus 292047.6 6728984     Null        100
+    ## 5 12328 Triturus marmoratus 292047.6 6722984     Null        100
+    ## 6  4943 Triturus marmoratus 320047.6 6820984     Null        100
 
 ## Visualise and analyse the SSI results
 
@@ -266,8 +272,7 @@ newggslopegraph(dataframe = mean_index_by_reso,
 ### Distribution map
 
 Plotting these maps allows to visualise the locations of observations
-and of randomly selected sites. Orange plots represent observation sites
-and purple ones the sites randomly selected.
+and of randomly selected sites.
 
 ``` r
 sub_distri <- subset(ssi_results[[3]], Resolution == "200")
@@ -287,6 +292,9 @@ ggplot() +
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+Purple plots represent observation sites and orange ones the sites
+randomly selected.
 
 ## Application : an example with amphibian communities survey in ponds
 
@@ -352,7 +360,7 @@ head(ex_com_df)
     ##       Site Years      X       Y Richness  SCS SCSw  SCI SCIw
     ## 1   Site 1  2010 335076 6788565        3 3.33 3.20 5.77 5.54
     ## 2  Site 10  2010 340610 6790480        5 3.40 3.40 7.60 7.60
-    ## 3 Site 100  2010 351549 6778613        5 3.60 3.78 8.05 8.45
+    ## 3 Site 100  2010 351549 6778613        5 3.40 3.67 7.60 8.21
     ## 4 Site 101  2010 351550 6778573        3 3.33 3.33 5.77 5.77
     ## 5 Site 102  2010 351577 6780908        3 2.67 3.54 4.62 6.13
     ## 6 Site 103  2010 351641 6778430        4 2.25 2.84 4.50 5.68
