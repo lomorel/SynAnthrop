@@ -1,0 +1,182 @@
+---
+title: "Calculation and application of the Species Synanthropy Index: additional example"
+author:
+- Loïs Morel^[UMR DECOD, lois.morel@agrocampus-ouest.fr]
+- Nadege Belouard^[UMR EcoBio, nadege.belouard@gmail.com]
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+This second tutorial demonstrates the applicability of the SSI function to larger datasets, such as GBIF data.
+
+We load necessary packages
+```{r setup, warning = FALSE, message = FALSE}
+
+library(SynAnthrop)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+```
+
+# Species Synanthropy Index: an example with GBIF data of amphibian populations in France
+
+## Setup
+
+The raster map used here is extracted from the French Naturalness Map, developed by [Guetté et al.(2021)](https://uicn.fr/CartNat/CartNat_Donnees/Note_technique_m%C3%A9thodologique/Projet%20CARTNAT_note%20technique_2021.pdf). This raster layer is not loaded with the `Synanthrop` package and can be downloaded [here](https://uicn.fr/CartNat/CartNat_Donnees/) and must be put in the `data/amphibiansGBIF` folder of this project under the name `Naturalness_France.tif`.
+
+```{r load spatial data}
+
+ras_raw <- raster::raster(file.path(here::here(), "data", "amphibiansGBIF", "Naturalness_France.tif"))
+rast_to_plot <- terra::rast(ras_raw)
+```
+
+Next, we load the occurrence data to be evaluated and check for missing coordinates.
+
+```{r load amphibian GBIF data}
+
+spOcc <- read.csv(file.path(here::here(), 
+                            "data", 
+                            "amphibiansGBIF", 
+                            "amphibiansOccurrencesGBIF.csv"), 
+                  sep = ";", h=T, na.strings=c("(vide)"))
+
+# eliminate points with missing coordinates
+missingcoord <- dim(spOcc %>% filter(is.na(Y) | is.na(Y)))[1]
+spOcc %<>% filter(!is.na(Y) | !is.na(Y))
+cat(paste(missingcoord, "point(s) were eliminated because of missing coordinates"))
+```
+
+
+We plot the data to make sure the two datasets use the same coordinate system and everything looks as expected.
+
+```{r plot map, fig.width = 10}
+
+ggplot() + 
+  tidyterra::geom_spatraster(data = rast_to_plot) +
+  geom_point(data = spOcc, aes(x = X, y = Y, color = Year)) +
+  scale_colour_gradient(labels = function(x) sprintf("%.0f", x),
+                        low = "darkgray", high = "black") +
+  tidyterra::scale_fill_whitebox_c(palette = "muted", direction= -1,
+                                   breaks = c(100, 325, 550),
+                                   labels = c("Low", "Medium", "High"),
+                                   name = "Naturalness")
+```
+
+Coordinates seem to be from different coordinate systems. We convert the occurrence data coordinate system (RGF93) to match that of the raster file (WGS84) and check if coordinates now match.
+
+```{r transform coordinate system}
+
+sp_map <- sf::st_as_sf(spOcc, coords = c("X", "Y"), crs = 4326)
+LCCcoord <- data.frame(sp_map %>% 
+                         sf::st_transform(crs = sf::st_crs(ras_raw)) %>% 
+                         sf::st_coordinates(.))
+spOcc %<>% mutate(X = LCCcoord$X,
+                  Y = LCCcoord$Y)
+
+ggplot() + 
+  tidyterra::geom_spatraster(data = rast_to_plot) +
+  geom_point(data = spOcc, aes(x = X, y = Y, color = Year)) +
+  scale_colour_gradient(labels = function(x) sprintf("%.0f", x),
+                        low = "darkgray", high = "black") +
+  tidyterra::scale_fill_whitebox_c(palette = "muted", direction= -1,
+                                   breaks = c(100, 325, 550),
+                                   labels = c("Low", "Medium", "High"),
+                                   name = "Naturalness")
+```
+
+
+
+## SSI calculation
+
+Here, we execute the function for 2 resolutions (500, 1000), with 500 simulations each. Each species must have been found in a minimum of 1000 cells to be evaluated (threshold argument). You will be prompted to validate the species list detected in the dataset.
+
+```{r execute ssi function}
+
+ssi_results <- ssi(r = ras_raw, 
+                   resolution = c(1000, 500),
+                   data = spOcc, 
+                   sim = 500, 
+                   threshold = 1000)
+```
+
+
+## Visualise and analyse the SSI results
+
+### SSI and effect sizes per species
+
+Here we visualize effect sizes and SSI obtained with the resolution 500.
+
+```{r summary of synanthropy index}
+
+sp_ssi <- ssi_results[[1]]
+effsize_res <- ssi_results [[2]]
+
+# keep only data for resolution 500
+# associate the SSI to the detailed effect sizes
+sub_effsize_res <- effsize_res %>% 
+  filter(Resolution == 500) %>% 
+  left_join(sp_ssi, by = c("Species", "Resolution"))
+
+# make the score a factor
+sub_effsize_res$Index <- as.factor(sub_effsize_res$Index)
+
+# plot the results
+ggplot(sub_effsize_res, 
+       aes(x = reorder(Species, -effsize), 
+           y = -effsize, fill = Index)) +
+  geom_hline(yintercept = 0.0, color = "darkgrey", 
+             linewidth = 0.8, linetype = "dashed") +
+  geom_boxplot() + 
+  coord_flip() +
+  scale_fill_brewer(name = "SSI", palette = "RdYlGn") +
+  ylab("Effect size") +
+  xlab("Species") +
+  theme(axis.title.y = element_blank()) +
+  theme(legend.position = c(0.9, 0.2)) +
+  theme_bw()
+
+```
+
+
+### Resolution comparison
+
+```{r compare resolutions, fig.width = 10}
+
+sp_ssi$Resolution <- as.factor(sp_ssi$Resolution)
+
+CGPfunctions::newggslopegraph(dataframe = sp_ssi,
+                Resolution,
+                Index,
+                Grouping = Species,
+                Title = "Synanthropy scores for amphibian species in western France",
+                SubTitle = NULL,
+                Caption = NULL)
+
+```
+
+### Distribution map
+
+```{r plot distribution map, fig.width = 10}
+
+points <- ssi_results[[3]])
+
+# we select one resolution, one set of simulated points, and the observed points
+sub_points <- points %>% filter(Resolution == "100",
+                                simulation %in% c(1, "no"))
+table(sub_points)
+distri <- sf_transform_xy (distri, 4326, 2154)
+
+ggplot() + 
+  geom_point(data = sub_points, aes(x = x, y = y, color = variable), 
+             size = 1.5, alpha = 0.5) +
+  scale_color_manual(values = c("#ff6600", "#660099")) +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  guides(color = guide_legend(title = "Points")) +
+  facet_wrap(. ~ Species) +
+  theme_void()
+
+```
+
