@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.RDataTmp*
+exported-data
+data/amphibiansBrittany/naturalnessMap.tif
+data/amphibiansGBIF/Naturalness_France.tif

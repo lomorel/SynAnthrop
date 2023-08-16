@@ -1,0 +1,35 @@
+Package: SynAnthrop
+Title: SynAnthrop
+Version: 0.0.1.1000
+Authors@R: 
+    c(person("Loïs", "Morel", , "lois.morel@agrocampus-ouest.fr", role = c("aut", "cre")),
+    person("Nadège", "Belouard", , "nadege.belouard@gmail.com", role = c("aut"),
+           comment = c(ORCID = "0000-0002-7968-7735")))
+Description: SynAnthrop is a R package developed to assess the sensitivity of species and communities to anthropogenization based on occurrence data, via the calculation of the Species Synanthropy Index (SSI).
+License: use_mit_license()
+Encoding: UTF-8
+LazyData: TRUE
+Imports: 
+  CGPfunctions,
+  dplyr, 
+  ggplot2,
+  here,
+  knitr,
+  ks,
+  magrittr,
+  pkgdown,
+  purrr,
+  raster,
+  RColorBrewer,
+  rmarkdown,
+  roxygen2,
+  rstatix,
+  scales,
+  sf,
+  tabularaster,
+  tibble,
+  tidyverse,
+  tidyterra,
+  terra
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
