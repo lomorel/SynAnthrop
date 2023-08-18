@@ -1,5 +1,5 @@
 # SynAnthrop: a R package to analyse species distribution along anthropisation gradient 
-<img src="./figures/SynAnthrop_logo.png" align="right" alt="" width="200" />
+<img src="./vignettes/SynAnthrop_logo.png" align="right" alt="" width="200" />
 
 
 ## Description
@@ -11,19 +11,25 @@ The analysis is based on the comparison of the observed distribution of species 
 
 
 ## Workflow 
-<img src="./figures/Synanthrop_workflow.png" />
+<img src="./vignettes/Synanthrop_workflow.png" />
 
 
-## Access the SSI analysis
-Make sure that Git is installed on your computer by typing the following line of code in R Terminal (Tools > Terminal > New terminal). If Git is not installed, you will need to download and install Git on your computer.
-```
-git --version
-```
+## Installation
 
-To install Synanthrop locally with its dependencies and documentation, set the working directory to the folder where you want the project to be stored. Type the following line of code in R console:
-```
-remotes::install_github('https://github.com/lomorel/SynAnthrop')
-```
+Install the package, its dependencies and documentation by typing the following line of code in the R console:
+
+``` 
+remotes::install_github("lomorel/SynAnthrop", dependencies = TRUE)
+``` 
+
+
+## SSI tutorial
+
+Access the SSI tutorial and analyses by:
+- consulting the SynAnthrop website [add url to GitHub page].
+- downloading the PDF files available in the `vignettes` subfolder 
+- executing the R vignettes in the `vignettes` subfolder.
+
 
 ## Citation
 Package and tutorial written by Loïs Morel, Lab. DECOD, Institut Agro, Rennes, France.
