@@ -41,12 +41,13 @@ ssi <- function(r = raster,
   # Safety check in case of typos
   cat("Species found in the dataset:\n")
   cat(sort(unique(data$Species)), sep = "\n")
-  var = readline("\nDo you wish to continue with this species list? (Y/N)")
-  if (var == "N" | var == "n") {
-    stop("Execution stopped.")
+  if (interactive() == TRUE) {
+    var = readline("\nDo you wish to continue with this species list? (Y/N)")
+    if (var == "N" | var == "n") {
+      stop("Execution stopped.")
+    }
   }
-  
-  
+
   
   # loop over each value listed in argument "resolution"
   for(value in resolution) { 
