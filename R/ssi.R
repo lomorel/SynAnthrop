@@ -12,14 +12,14 @@
 #'not be accounted for (default value: 30)
 #'
 #'@return Three data frames: 
-#'`[[1]]` a short summary table (one line per species) with the mean of all effect 
+#'`speciesScores` a short summary table (one line per species) with the mean of all effect 
 #'size and the corresponding index (range between 1 to 10) for each resolution. 
 #'The number of runs used to calculate the mean effect size is also specified. 
-#'`[[2]]` a data.frame compiling all the raw results, i.e, all the effect sizes 
+#'`effSizes` a data.frame compiling all the raw results, i.e, all the effect sizes 
 #'per run, with corresponding information provided by the function cohens_d 
 #'(rstatix package); n1 and n2 correspond to the number of occurrences compared 
 #'(n1 for the null distribution and n2 for observed data).
-#'`[[3]]` a data.frame archiving all the occurrence randomly drawn to assess scores.
+#'`samplesList` a data.frame archiving all the occurrence randomly drawn to assess scores.
 
 #'@examples
 #' example <- ssi(dataset)
@@ -330,7 +330,7 @@ ssi <- function(r = raster,
     effSizes <- rbind(effSizes, effSizesFull)
     
     # create a list for all 3 tables
-    results <- list(speciesScores, effSizes, samplesList) 
+    results <- list("speciesScores" = speciesScores, "effSizes" = effSizes, "samplesList" = samplesList) 
     
     cat(paste(Sys.time(), "Analysis finished for resolution", value, "\n"))
   } # end of resolution loop

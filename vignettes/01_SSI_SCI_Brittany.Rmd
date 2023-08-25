@@ -119,14 +119,14 @@ The first table contains the SSI calculated per species and resolution. It is a 
 
 ```{r summary of synanthropy index}
 
-head(sp_ssi <- ssi_results[[1]])
+head(sp_ssi <- ssi_results$speciesScores)
 ```
 
 The second table is a data.frame compiling the effect sizes (effsize) calculated for each comparison of simulated (Null) and observed data, for each species and resolution. The sample sizes for simulated (n1) and observed (n2) data are specified, as well as the magnitude of the effect size (negligible < small < moderate < large) provided by `rstatix::cohens_d`.
 
 ```{r effect sizes}
 
-head(effsize_res <- ssi_results [[2]])
+head(effsize_res <- ssi_results$effSizes)
 ``` 
 
 Here we combine these two tables to visualize effect sizes and SSI obtained with the resolution 100.
@@ -190,7 +190,7 @@ Finally, the third table contains all the points simulated and observed.
 
 ```{r points simulated and observed}
 
-head(points <- ssi_results[[3]])
+head(points <- ssi_results$samplesList)
 ```
 
 We can visualize the locations of observations and of one set of randomly selected sites for each species.

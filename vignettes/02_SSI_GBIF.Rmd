@@ -97,7 +97,7 @@ Here, we execute the function for 2 resolutions (500, 1000), with 500 simulation
 ```{r execute ssi function}
 
 ssi_results <- ssi(r = ras_raw, 
-                   resolution = c(1000, 500),
+                   resolution = c(200, 300),
                    data = spOcc, 
                    sim = 500, 
                    threshold = 1000)
@@ -108,17 +108,17 @@ ssi_results <- ssi(r = ras_raw,
 
 ### SSI and effect sizes per species
 
-Here we visualize effect sizes and SSI obtained with the resolution 500.
+Here we visualize effect sizes and SSI obtained with the resolution 200.
 
 ```{r summary of synanthropy index}
 
-sp_ssi <- ssi_results[[1]]
-effsize_res <- ssi_results [[2]]
+sp_ssi <- ssi_results$speciesScores
+effsize_res <- ssi_results$effSizes
 
-# keep only data for resolution 500
+# keep only data for resolution 200
 # associate the SSI to the detailed effect sizes
 sub_effsize_res <- effsize_res %>% 
-  filter(Resolution == 500) %>% 
+  filter(Resolution == 200) %>% 
   left_join(sp_ssi, by = c("Species", "Resolution"))
 
 # make the score a factor
@@ -162,10 +162,10 @@ CGPfunctions::newggslopegraph(dataframe = sp_ssi,
 
 ```{r plot distribution map, fig.width = 10}
 
-points <- ssi_results[[3]]
+points <- ssi_results$samplesList
 
 # we select one resolution, one set of simulated points, and the observed points
-sub_points <- points %>% filter(Resolution == "1000",
+sub_points <- points %>% filter(Resolution == "200",
                                 simulation %in% c(1, "no"))
 
 ggplot() + 
