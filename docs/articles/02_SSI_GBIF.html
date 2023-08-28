@@ -79,7 +79,7 @@ Synanthropy Index: additional example</h1>
 Belouard<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
 </h4>
             
-            <h4 data-toc-skip class="date">2023-08-18</h4>
+            <h4 data-toc-skip class="date">2023-08-25</h4>
       
       
       <div class="hidden name"><code>02_SSI_GBIF.Rmd</code></div>
@@ -173,37 +173,117 @@ mode, you will be prompted to validate the species list detected in the
 dataset.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ssi_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ssi.html">ssi</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">ras_raw</span>, </span>
-<span>                   resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">500</span><span class="op">)</span>,</span>
+<span>                   resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">300</span><span class="op">)</span>,</span>
 <span>                   data <span class="op">=</span> <span class="va">spOcc</span>, </span>
 <span>                   sim <span class="op">=</span> <span class="fl">500</span>, </span>
 <span>                   threshold <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 2023-08-18 16:08:15 - Aggregate naturalness raster cells at resolution 1000 (this step may take a few minutes)</span></span>
+<pre><code><span><span class="co">## Species found in the dataset:</span></span>
+<span><span class="co">## Alytes almogavarii</span></span>
+<span><span class="co">## Alytes obstetricans</span></span>
+<span><span class="co">## Ambystoma maculatum</span></span>
+<span><span class="co">## Bombina bombina</span></span>
+<span><span class="co">## Bombina variegata</span></span>
+<span><span class="co">## Bufo bufo</span></span>
+<span><span class="co">## Bufo spinosus</span></span>
+<span><span class="co">## Bufotes viridis</span></span>
+<span><span class="co">## Calotriton asper</span></span>
+<span><span class="co">## Discoglossus pictus</span></span>
+<span><span class="co">## Discoglossus sardus</span></span>
+<span><span class="co">## Epidalea calamita</span></span>
+<span><span class="co">## Hyla arborea</span></span>
+<span><span class="co">## Hyla meridionalis</span></span>
+<span><span class="co">## Hyla molleri</span></span>
+<span><span class="co">## Ichthyosaura alpestris</span></span>
+<span><span class="co">## Lissotriton helveticus</span></span>
+<span><span class="co">## Lissotriton vulgaris</span></span>
+<span><span class="co">## Lithobates catesbeianus</span></span>
+<span><span class="co">## Pelobates cultripes</span></span>
+<span><span class="co">## Pelobates fuscus</span></span>
+<span><span class="co">## Pelodytes punctatus</span></span>
+<span><span class="co">## Pelophylax bergeri</span></span>
+<span><span class="co">## Pelophylax kurtmuelleri</span></span>
+<span><span class="co">## Pelophylax lessonae</span></span>
+<span><span class="co">## Pelophylax perezi</span></span>
+<span><span class="co">## Pelophylax ridibundus</span></span>
+<span><span class="co">## Proteus anguinus</span></span>
+<span><span class="co">## Rana arvalis</span></span>
+<span><span class="co">## Rana dalmatina</span></span>
+<span><span class="co">## Rana pyrenaica</span></span>
+<span><span class="co">## Rana temporaria</span></span>
+<span><span class="co">## Ranoidea aurea</span></span>
+<span><span class="co">## Salamandra atra</span></span>
+<span><span class="co">## Salamandra corsica</span></span>
+<span><span class="co">## Salamandra lanzai</span></span>
+<span><span class="co">## Salamandra salamandra</span></span>
+<span><span class="co">## Speleomantes strinatii</span></span>
+<span><span class="co">## Triturus carnifex</span></span>
+<span><span class="co">## Triturus cristatus</span></span>
+<span><span class="co">## Triturus cristatus x T. marmoratus</span></span>
+<span><span class="co">## Triturus marmoratus</span></span>
+<span><span class="co">## Xenopus laevis</span></span>
+<span><span class="co">## 2023-08-25 13:33:54 - Aggregate naturalness raster cells at resolution 200 (this step may take a few minutes)</span></span>
 <span><span class="co">## 1 observation(s) were eliminated because of mismatch with the raster file</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in ks.defaults(x = x, w = w, binned = binned, bgridsize = bgridsize, : Weights don't sum to sample size - they have been scaled accordingly</span></span></code></pre>
 <pre><code><span><span class="co">## Species that will be evaluated are:</span></span>
 <span><span class="co">## Alytes obstetricans</span></span>
+<span><span class="co">## Bombina variegata</span></span>
 <span><span class="co">## Bufo bufo</span></span>
+<span><span class="co">## Bufo spinosus</span></span>
+<span><span class="co">## Epidalea calamita</span></span>
+<span><span class="co">## Hyla arborea</span></span>
+<span><span class="co">## Hyla meridionalis</span></span>
+<span><span class="co">## Ichthyosaura alpestris</span></span>
 <span><span class="co">## Lissotriton helveticus</span></span>
+<span><span class="co">## Lissotriton vulgaris</span></span>
+<span><span class="co">## Pelodytes punctatus</span></span>
+<span><span class="co">## Pelophylax lessonae</span></span>
+<span><span class="co">## Pelophylax ridibundus</span></span>
 <span><span class="co">## Rana dalmatina</span></span>
 <span><span class="co">## Rana temporaria</span></span>
 <span><span class="co">## Salamandra salamandra</span></span>
-<span><span class="co">## 2023-08-18 16:40:40 - Generating null distributions for:</span></span>
-<span><span class="co">## 2023-08-18 16:40:40 Alytes obstetricans (1/6)</span></span>
+<span><span class="co">## Triturus cristatus</span></span>
+<span><span class="co">## Triturus marmoratus</span></span>
+<span><span class="co">## 2023-08-25 13:58:37 - Generating null distributions for:</span></span>
+<span><span class="co">## 2023-08-25 13:58:37 Alytes obstetricans (1/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:41:03 Bufo bufo (2/6)</span></span>
+<span><span class="co">## 2023-08-25 14:02:13 Bombina variegata (2/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:41:23 Lissotriton helveticus (3/6)</span></span>
+<span><span class="co">## 2023-08-25 14:03:12 Bufo bufo (3/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:41:45 Rana dalmatina (4/6)</span></span>
+<span><span class="co">## 2023-08-25 14:05:53 Bufo spinosus (4/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:42:06 Rana temporaria (5/6)</span></span>
+<span><span class="co">## 2023-08-25 14:07:31 Epidalea calamita (5/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:42:27 Salamandra salamandra (6/6)</span></span>
+<span><span class="co">## 2023-08-25 14:09:34 Hyla arborea (6/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:42:50 - Calculating effect sizes...</span></span>
+<span><span class="co">## 2023-08-25 14:11:45 Hyla meridionalis (7/18)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 16:48:04 Analysis finished for resolution 1000 </span></span>
-<span><span class="co">## 2023-08-18 16:48:04 - Aggregate naturalness raster cells at resolution 500 (this step may take a few minutes)</span></span>
+<span><span class="co">## 2023-08-25 14:13:14 Ichthyosaura alpestris (8/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:14:44 Lissotriton helveticus (9/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:17:54 Lissotriton vulgaris (10/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:18:25 Pelodytes punctatus (11/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:19:28 Pelophylax lessonae (12/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:20:06 Pelophylax ridibundus (13/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:22:03 Rana dalmatina (14/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:25:34 Rana temporaria (15/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:29:11 Salamandra salamandra (16/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:32:29 Triturus cristatus (17/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:33:43 Triturus marmoratus (18/18)</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 14:35:10 - Calculating effect sizes...</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 15:06:54 Analysis finished for resolution 200 </span></span>
+<span><span class="co">## 2023-08-25 15:06:54 - Aggregate naturalness raster cells at resolution 300 (this step may take a few minutes)</span></span>
 <span><span class="co">## 1 observation(s) were eliminated because of mismatch with the raster file</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in ks.defaults(x = x, w = w, binned = binned, bgridsize = bgridsize, : Weights don't sum to sample size - they have been scaled accordingly</span></span></code></pre>
 <pre><code><span><span class="co">## Species that will be evaluated are:</span></span>
@@ -217,49 +297,52 @@ dataset.</p>
 <span><span class="co">## Ichthyosaura alpestris</span></span>
 <span><span class="co">## Lissotriton helveticus</span></span>
 <span><span class="co">## Pelodytes punctatus</span></span>
+<span><span class="co">## Pelophylax lessonae</span></span>
 <span><span class="co">## Pelophylax ridibundus</span></span>
 <span><span class="co">## Rana dalmatina</span></span>
 <span><span class="co">## Rana temporaria</span></span>
 <span><span class="co">## Salamandra salamandra</span></span>
 <span><span class="co">## Triturus cristatus</span></span>
 <span><span class="co">## Triturus marmoratus</span></span>
-<span><span class="co">## 2023-08-18 17:16:34 - Generating null distributions for:</span></span>
-<span><span class="co">## 2023-08-18 17:16:34 Alytes obstetricans (1/16)</span></span>
+<span><span class="co">## 2023-08-25 15:41:15 - Generating null distributions for:</span></span>
+<span><span class="co">## 2023-08-25 15:41:15 Alytes obstetricans (1/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:17:31 Bombina variegata (2/16)</span></span>
+<span><span class="co">## 2023-08-25 15:43:00 Bombina variegata (2/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:17:54 Bufo bufo (3/16)</span></span>
+<span><span class="co">## 2023-08-25 15:43:38 Bufo bufo (3/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:18:42 Bufo spinosus (4/16)</span></span>
+<span><span class="co">## 2023-08-25 15:45:02 Bufo spinosus (4/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:19:18 Epidalea calamita (5/16)</span></span>
+<span><span class="co">## 2023-08-25 15:46:03 Epidalea calamita (5/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:19:58 Hyla arborea (6/16)</span></span>
+<span><span class="co">## 2023-08-25 15:47:13 Hyla arborea (6/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:20:38 Hyla meridionalis (7/16)</span></span>
+<span><span class="co">## 2023-08-25 15:48:26 Hyla meridionalis (7/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:21:04 Ichthyosaura alpestris (8/16)</span></span>
+<span><span class="co">## 2023-08-25 15:49:15 Ichthyosaura alpestris (8/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:21:35 Lissotriton helveticus (9/16)</span></span>
+<span><span class="co">## 2023-08-25 15:50:08 Lissotriton helveticus (9/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:22:37 Pelodytes punctatus (10/16)</span></span>
+<span><span class="co">## 2023-08-25 15:51:57 Pelodytes punctatus (10/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:23:02 Pelophylax ridibundus (11/16)</span></span>
+<span><span class="co">## 2023-08-25 15:52:37 Pelophylax lessonae (11/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:23:44 Rana dalmatina (12/16)</span></span>
+<span><span class="co">## 2023-08-25 15:53:02 Pelophylax ridibundus (12/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:24:45 Rana temporaria (13/16)</span></span>
+<span><span class="co">## 2023-08-25 15:54:13 Rana dalmatina (13/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:25:48 Salamandra salamandra (14/16)</span></span>
+<span><span class="co">## 2023-08-25 15:56:09 Rana temporaria (14/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:26:56 Triturus cristatus (15/16)</span></span>
+<span><span class="co">## 2023-08-25 15:58:10 Salamandra salamandra (15/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:27:34 Triturus marmoratus (16/16)</span></span>
+<span><span class="co">## 2023-08-25 16:00:07 Triturus cristatus (16/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:28:12 - Calculating effect sizes...</span></span>
+<span><span class="co">## 2023-08-25 16:01:06 Triturus marmoratus (17/17)</span></span>
 <span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
-<span><span class="co">## 2023-08-18 17:47:02 Analysis finished for resolution 500 </span></span>
-<span><span class="co">## 2023-08-18 17:47:02 All done.</span></span></code></pre>
+<span><span class="co">## 2023-08-25 16:02:08 - Calculating effect sizes...</span></span>
+<span><span class="co">## Simulation 1/500...  100/500...  200/500...  300/500...  400/500...  500/500</span></span>
+<span><span class="co">## 2023-08-25 16:28:29 Analysis finished for resolution 300 </span></span>
+<span><span class="co">## 2023-08-25 16:28:29 All done.</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="visualise-and-analyse-the-ssi-results">Visualise and analyse the SSI results<a class="anchor" aria-label="anchor" href="#visualise-and-analyse-the-ssi-results"></a>
@@ -268,15 +351,15 @@ dataset.</p>
 <h4 id="ssi-and-effect-sizes-per-species">SSI and effect sizes per species<a class="anchor" aria-label="anchor" href="#ssi-and-effect-sizes-per-species"></a>
 </h4>
 <p>Here we visualize effect sizes and SSI obtained with the resolution
-500.</p>
+200.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sp_ssi</span> <span class="op">&lt;-</span> <span class="va">ssi_results</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="va">effsize_res</span> <span class="op">&lt;-</span> <span class="va">ssi_results</span> <span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">sp_ssi</span> <span class="op">&lt;-</span> <span class="va">ssi_results</span><span class="op">$</span><span class="va">speciesScores</span></span>
+<span><span class="va">effsize_res</span> <span class="op">&lt;-</span> <span class="va">ssi_results</span><span class="op">$</span><span class="va">effSizes</span></span>
 <span></span>
-<span><span class="co"># keep only data for resolution 500</span></span>
+<span><span class="co"># keep only data for resolution 200</span></span>
 <span><span class="co"># associate the SSI to the detailed effect sizes</span></span>
 <span><span class="va">sub_effsize_res</span> <span class="op">&lt;-</span> <span class="va">effsize_res</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Resolution</span> <span class="op">==</span> <span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Resolution</span> <span class="op">==</span> <span class="fl">200</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">sp_ssi</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Species"</span>, <span class="st">"Resolution"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># make the score a factor</span></span>
@@ -319,10 +402,10 @@ dataset.</p>
 <h4 id="distribution-map">Distribution map<a class="anchor" aria-label="anchor" href="#distribution-map"></a>
 </h4>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">points</span> <span class="op">&lt;-</span> <span class="va">ssi_results</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">points</span> <span class="op">&lt;-</span> <span class="va">ssi_results</span><span class="op">$</span><span class="va">samplesList</span></span>
 <span></span>
 <span><span class="co"># we select one resolution, one set of simulated points, and the observed points</span></span>
-<span><span class="va">sub_points</span> <span class="op">&lt;-</span> <span class="va">points</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Resolution</span> <span class="op">==</span> <span class="st">"1000"</span>,</span>
+<span><span class="va">sub_points</span> <span class="op">&lt;-</span> <span class="va">points</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Resolution</span> <span class="op">==</span> <span class="st">"200"</span>,</span>
 <span>                                <span class="va">simulation</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"no"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
