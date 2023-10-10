@@ -1,5 +1,5 @@
 # SynAnthrop: a R package to analyse species distribution along anthropisation gradient 
-<img src="./vignettes/SynAnthrop_logo.png" align="right" alt="" width="200" />
+<img src="man/figures/SynAnthrop_logo.png" align="right" alt="SynAnthrop logo" width="200" />
 
 
 ## Description
@@ -11,7 +11,7 @@ The analysis is based on the comparison of the observed distribution of species 
 
 
 ## Workflow 
-<img src="./vignettes/Synanthrop_workflow.png" />
+<img src="man/figures/Synanthrop_workflow.png" />
 
 
 ## Installation
@@ -25,14 +25,15 @@ remotes::install_github("lomorel/SynAnthrop", dependencies = TRUE)
 
 ## SSI tutorial
 
-Access the SSI tutorial and analyses by:
-- consulting the SynAnthrop website [add url to GitHub page].
-- downloading the PDF files available in the `vignettes` subfolder 
-- executing the R vignettes in the `vignettes` subfolder.
+Access the SSI tutorial and analyses by :  
+- consulting <a href= "https://github.com/lomorel/SynAnthrop/">the SynAnthrop GitHub repository</a>  
+- downloading the PDF files available in the `vignettes` subfolder    
+- executing the R vignettes in the `vignettes` subfolder  
 
 
 ## Citation
 Package and tutorial written by Loïs Morel, Lab. DECOD, Institut Agro, Rennes, France.
 
-Citations:
-- Morel L. 2023. SynAnthrop: Species distribution and sensitivity to anthropisation, R package version 0.1.1, https://github.com/lomorel/SynAnthrop
+Citations:  
+- Morel L. 2023. SynAnthrop: Species distribution and sensitivity to anthropisation, R package version 0.1.1, https://github.com/lomorel/SynAnthrop  
+  

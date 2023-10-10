@@ -4,5 +4,6 @@
 .Ruserdata
 .RDataTmp*
 exported-data
+sandbox
 data/amphibiansBrittany/naturalnessMap.tif
 data/amphibiansGBIF/Naturalness_France.tif

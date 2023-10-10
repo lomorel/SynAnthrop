@@ -34,9 +34,6 @@
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/01_SSI_SCI_Brittany.html">Calculation and application of the Species Synanthropy Index: tutorial</a>
     </li>
-    <li>
-      <a href="../articles/02_SSI_GBIF.html">Calculation and application of the Species Synanthropy Index: additional example</a>
-    </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -103,8 +100,8 @@ per run, with corresponding information provided by the function cohens_d
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">example</span> <span class="op">&lt;-</span> <span class="fu">ssi</span><span class="op">(</span><span class="va">dataset</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2023-08-18 15:19:54 - Aggregate naturalness raster cells at resolution 200 (this step may take a few minutes)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'x' in selecting a method for function 'aggregate': object 'dataset' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Species found in the dataset:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in unique(data$Species):</span> object 'dataset' not found</span>
 </code></pre></div>
     </div>
   </div>
