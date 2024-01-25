@@ -47,7 +47,13 @@ ssi <- function(r = raster,
       stop("Execution stopped.")
     }
   }
-
+  
+  # Check if a temporal scale is available for weighing sampling effort
+  if(!"Year" %in% colnames(data)) { 
+    cat("No \"Year\" variable available, all observations will be considered
+        from the same year \n")
+  } 
+  
   
   # loop over each value listed in argument "resolution"
   for(value in resolution) { 
@@ -68,7 +74,7 @@ ssi <- function(r = raster,
       mutate(Cell = as.numeric(rownames(ras.value))) %>% 
       # remove cells without naturalness values (e.g. offshore cells)
       na.omit() 
-    
+  
     
     
     
@@ -86,28 +92,37 @@ ssi <- function(r = raster,
     data_res %<>% filter(!is.na(Cell))
     cat(paste(missingcoord, "observation(s) were eliminated because of mismatch with the raster file\n"))
 
-    # calculate the number of years each cell has been visited
-    x_visits <- data_res %>%
-      group_by(Cell) %>%
-      summarize(nYearVisited = n_distinct(Year))
+    # If Year is available, calculate number of years of visits
+    if("Year" %in% colnames(data_res)) { 
+      # calculate the number of years each cell has been visited
+      x_visits <- data_res %>%
+        group_by(Cell) %>%
+        summarize(nYearVisited = n_distinct(Year))
+    
+    } else {
+      # attribute one year per cell
+      x_visits <- data_res %>%
+        distinct(Cell) %>%
+        mutate(nYearVisited = 1)
+    }
+      
+      # compile a data.frame with the number of visits for all raster cells, 
+      # including non-visited cells (0)
+      x_visits_all <- data.frame(Cell = seq(1:terra::ncell(ras))) %>% 
+        dplyr::full_join(x_visits, by = "Cell") %>% 
+        mutate(nYearVisited = ifelse(is.na(nYearVisited), 0, nYearVisited)) 
   
-    # compile a data.frame with the number of visits for all raster cells, 
-    # including non-visited cells (0)
-    x_visits_all <- data.frame(Cell = seq(1:terra::ncell(ras))) %>% 
-      dplyr::full_join(x_visits, by = "Cell") %>% 
-      mutate(nYearVisited = ifelse(is.na(nYearVisited), 0, nYearVisited)) 
-
-    # obtain XY coordinates of raster cells
-    cellCoord <- data.frame(terra::xyFromCell(ras, x_visits_all$Cell)) 
-    cellCoord %<>% mutate(Cell = as.numeric(row.names(cellCoord)))
-    x_visits_all %<>% left_join(cellCoord, by = "Cell")
-
-    # interpolate sampling effort by kernel density 
-    kernel_sampling <- ks::kde(x = x_visits_all %>% select(x, y),
-                               w = x_visits_all$nYearVisited)
-
+      # obtain XY coordinates of raster cells
+      cellCoord <- data.frame(terra::xyFromCell(ras, x_visits_all$Cell)) 
+      cellCoord %<>% mutate(Cell = as.numeric(row.names(cellCoord)))
+      x_visits_all %<>% left_join(cellCoord, by = "Cell")
+  
+      # interpolate sampling effort by kernel density 
+      kernel_sampling <- ks::kde(x = x_visits_all %>% select(x, y),
+                                 w = x_visits_all$nYearVisited)
     
-    
+
+  
     
     
     # STEP 3 | Dataset: identify species to evaluate ####
@@ -188,6 +203,8 @@ ssi <- function(r = raster,
       # areas) 
       hullCoord %<>% filter(Cell %in% ras.value$Cell)
 
+      
+      
       # select kernel weights (sampling effort for each cell within the convex hull)
       kernel_weights <- data.frame(weight = kernel_sampling$w,
                          Cell = seq(1:length(kernel_sampling$w))) %>%
@@ -214,7 +231,7 @@ ssi <- function(r = raster,
         } 
         
         
-        # resample cells within the convex hull, with their associated kernel weight
+        # resample cells within the convex hull with their associated kernel weight
         sp_resampled <- sample_n(kernel_weights, #x_visits_all,
                                  size = spEvaluated %>% filter(Species == sp) %>% pull(nCellsPresent), 
                                  replace = FALSE,
@@ -335,7 +352,7 @@ ssi <- function(r = raster,
     cat(paste(Sys.time(), "Analysis finished for resolution", value, "\n"))
   } # end of resolution loop
   
-  cat(paste(Sys.time(), "All done."))
+  cat(paste(Sys.time(), "Analysis completed."))
   
   return(results)
   
