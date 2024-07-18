@@ -18,18 +18,15 @@ Imports:
   ks,
   magrittr,
   pkgdown,
-  purrr,
-  raster,
   RColorBrewer,
   rmarkdown,
   roxygen2,
   rstatix,
   scales,
   sf,
-  tabularaster,
   tibble,
   tidyverse,
   tidyterra,
   terra
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

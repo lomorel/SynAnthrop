@@ -1,9 +1,6 @@
-.Rproj.user
-.Rhistory
 .RData
-.Ruserdata
-.RDataTmp*
-exported-data
-sandbox
-data/amphibiansBrittany/naturalnessMap.tif
-data/amphibiansGBIF/Naturalness_France.tif
+.Rhistory
+.Rproj.user
+data/amphibiansBrittany/Donnees cartographiques/
+data/amphibiansBrittany/Donnees cartographiques.zip
+data/amphibiansBrittany/Layer4_FINAL.tif

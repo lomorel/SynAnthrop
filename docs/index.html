@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SynAnthrop • SynAnthrop</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -68,7 +68,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="synanthrop-a-r-package-to-analyse-species-distribution-along-anthropisation-gradient">SynAnthrop: a R package to analyse species distribution along anthropisation gradient<a class="anchor" aria-label="anchor" href="#synanthrop-a-r-package-to-analyse-species-distribution-along-anthropisation-gradient"></a>
+<div class="page-header"><h1 id="synanthrop-an-r-package-to-analyse-species-distribution-along-anthropisation-gradient">SynAnthrop: an R package to analyse species distribution along anthropisation gradient<a class="anchor" aria-label="anchor" href="#synanthrop-an-r-package-to-analyse-species-distribution-along-anthropisation-gradient"></a>
 </h1></div>
 <p><img src="reference/figures/SynAnthrop_logo.png" align="right" alt="SynAnthrop logo" width="200"></p>
 <div class="section level2">
@@ -86,16 +86,30 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install the package, its dependencies and documentation by typing the following line of code in the R console:</p>
-<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"lomorel/SynAnthrop"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre>
+<div class="section level3">
+<h3 id="if-you-wish-to-visualize-the-ssi-tutorial-only">If you wish to visualize the SSI tutorial only<a class="anchor" aria-label="anchor" href="#if-you-wish-to-visualize-the-ssi-tutorial-only"></a>
+</h3>
+<p>2 options:<br>
+* Access the “Articles” tab of <a href="https://lomorel.github.io/SynAnthrop" class="external-link">the SynAnthrop GitHub site</a><br>
+* Download the PDF tutorial in the vignettes folder of <a href="https://github.com/lomorel/SynAnthrop/" class="external-link">the SynAnthrop GitHub repository</a></p>
 </div>
-<div class="section level2">
-<h2 id="ssi-tutorial">SSI tutorial<a class="anchor" aria-label="anchor" href="#ssi-tutorial"></a>
-</h2>
-<p>Access the SSI tutorial and analyses by :<br>
-- consulting <a href="https://github.com/lomorel/SynAnthrop/" class="external-link">the SynAnthrop GitHub repository</a><br>
-- downloading the PDF files available in the <code>vignettes</code> subfolder<br>
-- executing the R vignettes in the <code>vignettes</code> subfolder</p>
+<div class="section level3">
+<h3 id="if-you-wish-to-install-the-package-and-execute-the-tutorial">If you wish to install the package and execute the tutorial<a class="anchor" aria-label="anchor" href="#if-you-wish-to-install-the-package-and-execute-the-tutorial"></a>
+</h3>
+<p>In the R terminal tab, <code>cd</code> to the folder where you want to store the project, and type:</p>
+<pre><code>git clone https://github.com/lomorel/SynAnthrop.git</code></pre>
+<p>Access the content of the package by opening the <code>SynAnthrop.Rproj</code> file in Rstudio. Install <code>SynAnthrop</code> by typing in the R console:</p>
+<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
+<p>Finally, open the tutorial file (.Rmd) in the <code>vignettes</code> folder, and execute the code chunks.</p>
+</div>
+<div class="section level3">
+<h3 id="if-you-wish-to-use-the-package-functions-only-without-using-the-tutorial">If you wish to use the package functions only, without using the tutorial<a class="anchor" aria-label="anchor" href="#if-you-wish-to-use-the-package-functions-only-without-using-the-tutorial"></a>
+</h3>
+<p>Install the package by typing the following line of code in the R console:</p>
+<pre><code><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"lomorel/SynAnthrop"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SynAnthrop</span><span class="op">)</span></span></code></pre>
+<p>The <code>ssi</code> function is now ready to use, and the help file is accessible by typing <code><a href="reference/ssi.html">?ssi</a></code></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -144,7 +158,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

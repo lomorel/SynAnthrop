@@ -1,4 +1,4 @@
-# SynAnthrop: a R package to analyse species distribution along anthropisation gradient 
+# SynAnthrop: an R package to analyse species distribution along anthropisation gradient 
 <img src="man/figures/SynAnthrop_logo.png" align="right" alt="SynAnthrop logo" width="200" />
 
 
@@ -16,19 +16,38 @@ The analysis is based on the comparison of the observed distribution of species 
 
 ## Installation
 
-Install the package, its dependencies and documentation by typing the following line of code in the R console:
+### If you wish to visualize the SSI tutorial only
+
+2 options:  
+* Access the "Articles" tab of <a href= "https://lomorel.github.io/SynAnthrop">the SynAnthrop GitHub site</a>  
+* Download the PDF tutorial in the vignettes folder of <a href= "https://github.com/lomorel/SynAnthrop/">the SynAnthrop GitHub repository</a>  
+
+
+### If you wish to install the package and execute the tutorial
+In the R terminal tab, `cd` to the folder where you want to store the project, and type:
+
+```
+git clone https://github.com/lomorel/SynAnthrop.git
+```
+
+Access the content of the package by opening the `SynAnthrop.Rproj` file in Rstudio. Install `SynAnthrop` by typing in the R console:
+```
+devtools::install()
+```
+Finally, open the tutorial file (.Rmd) in the `vignettes` folder, and execute the code chunks.
+
+
+### If you wish to use the package functions only, without using the tutorial
+Install the package by typing the following line of code in the R console:
 
 ``` 
-remotes::install_github("lomorel/SynAnthrop", dependencies = TRUE)
+devtools::install_github("lomorel/SynAnthrop", dependencies = TRUE)
+library(SynAnthrop)
 ``` 
 
+The `ssi` function is now ready to use, and the help file is accessible by typing `?ssi`
 
-## SSI tutorial
 
-Access the SSI tutorial and analyses by :  
-- consulting <a href= "https://github.com/lomorel/SynAnthrop/">the SynAnthrop GitHub repository</a>  
-- downloading the PDF files available in the `vignettes` subfolder    
-- executing the R vignettes in the `vignettes` subfolder  
 
 
 ## Citation
