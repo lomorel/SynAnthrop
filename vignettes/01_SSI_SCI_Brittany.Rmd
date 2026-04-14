@@ -1,9 +1,13 @@
 ---
 title: 'Calculation and application of the Species Synanthropy Index: tutorial'
 author:
-- Loïs Morel^[UMR DECOD, lois.morel@agrocampus-ouest.fr]
+- Loïs Morel^[UMR DECOD, lois.morel@institut-agro.fr]
 - Nadege Belouard^[UMR EcoBio, nadege.belouard@gmail.com]
+<<<<<<< HEAD
 - Baptiste Bongibault
+=======
+- Gurvan Le Floch
+>>>>>>> 610aedf4ce33aface508331763980fea362bb4d8
 date: "`r Sys.Date()`"
 output:
   pdf_document: 
