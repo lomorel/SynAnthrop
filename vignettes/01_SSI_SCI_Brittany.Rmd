@@ -3,6 +3,7 @@ title: 'Calculation and application of the Species Synanthropy Index: tutorial'
 author:
 - Loïs Morel^[UMR DECOD, lois.morel@institut-agro.fr]
 - Nadege Belouard^[UMR EcoBio, nadege.belouard@gmail.com]
+- Baptiste Bongibault
 - Gurvan Le Floch
 date: "`r Sys.Date()`"
 output:
@@ -191,7 +192,7 @@ On the opposite end of the gradient, green frogs (Pelophylax spp. and Pelophylax
 It is useful to check whether scores are affected by the level of data aggregation operated during the process. We create a graph that allows the comparison of scores and species ranks across data resolutions.
 
 ```{r compare resolutions, fig.width = 10}
-
+# change resolution class
 sp_ssi$Resolution <- as.factor(sp_ssi$Resolution)
 
 CGPfunctions::newggslopegraph(dataframe = sp_ssi,
