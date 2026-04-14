@@ -342,7 +342,7 @@ It is interesting to note that these results contrast in part with the map, with
 
 [Zinnen J., Spyreas G., Erdős L., Berg C. & Matthews J.W. 2020. Expert-based measures of human impact to vegetation. Applied Vegetation Science, 24:e12523](https://onlinelibrary.wiley.com/doi/abs/10.1111/avsc.12523)
 
-# Citation
+# Citations
 
 Citations:
 * Morel L. 2023. SynAnthrop: Species distribution and sensitivity to anthropisation, R package version 0.1.1, https://github.com/lomorel/SynAnthrop
