@@ -7,66 +7,66 @@ library(ggplot2)
 library(dplyr)
 library(magrittr)
 library(future.apply)
+library(here)
 
 plan(multicore, workers = 1)
 
 
-#### Charge data #####
+#### Load data #####
 
 ##### Amphibian data #####
 # 
-  # Amphibian=vect("C:/Users/bongibau/Documents/Synanthrope/Vertebre/Amphibia/Donnees_Amphibia_clean.shp")
+Amphibian=vect(file.path(here(), "data", "squamata", "Donnees_Squamata_clean.shp"))
+
 # Amphibian=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Amphibia_clean.shp")
+# Amphibian=as.data.frame(Amphibian, , geom="XY")
 # 
-#   Amphibian=as.data.frame(Amphibian, , geom="XY")
-# 
-#   colnames(Amphibian)[colnames(Amphibian) == 'x'] <- 'X'
-#   colnames(Amphibian)[colnames(Amphibian) == 'y'] <- 'Y'
-# 
-# 
-#   Amphibian_ready=Amphibian[!(Amphibian$datasetKey=="8a863029-f435-446a-821e-275f4f641165" & Amphibian$countryCod=="NL"),]
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="2dd3b5c1-2a7f-4324-83d3-d05cff85676b")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="ba8b3250-6115-4680-8c21-6129c35ba738")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="bd067a4c-05b8-4def-925c-60ce83c01891")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="cd9e0589-187b-43c0-9692-50d8db7d0467")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-#   Amphibian_ready=subset(Amphibian_ready, datasetKey!="dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")
-# 
+Amphibian %<>% as.data.frame(geom = "XY") %>%
+  rename(X = x, Y = y) %>% 
+  filter(!datasetKey %in% c("da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                            "f3278405-0943-41a0-9f04-3a7733ec344d",
+                            "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                            "ba8b3250-6115-4680-8c21-6129c35ba738",
+                            "bd067a4c-05b8-4def-925c-60ce83c01891",
+                            "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                            "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                            "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")) %>%
+  filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
+
+# Sanity check: are there the expected number of observations?
+dim(Amphibian_ready)[1] 
+  
 
 
 ##### Squamata data #####
    
-  # Squamata=vect("C:/Users/bongibau/Documents/Synanthrope/Vertebre/Squamata/Donnees_Squamata_clean.shp")
-#   Squamata=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Squamata_clean.shp")
-# #
-# Squamata=as.data.frame(Squamata, , geom="XY")
-# 
-  # colnames(Squamata)[colnames(Squamata) == 'x'] <- 'X'
-  # colnames(Squamata)[colnames(Squamata) == 'y'] <- 'Y'
-# 
-# 
-#   Squamata_ready=Squamata[!(Squamata$datasetKey=="8a863029-f435-446a-821e-275f4f641165" & Squamata$countryCod=="NL"),]
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="2dd3b5c1-2a7f-4324-83d3-d05cff85676b")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="ba8b3250-6115-4680-8c21-6129c35ba738")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="bd067a4c-05b8-4def-925c-60ce83c01891")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="cd9e0589-187b-43c0-9692-50d8db7d0467")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")
-# 
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="24168b97-a6b0-41cf-9836-29110572efc6")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="45cff797-6ed9-4a25-b659-30aa4caa46f2")
-# 
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="72ea9678-7174-44c4-9535-de9cb733a15d")
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="d3b6cb30-0a64-4f82-91ea-0bb14637ee17")
-# 
-#   Squamata_ready=subset(Squamata_ready, datasetKey!="faf313a1-9ae4-43f4-bfc9-974281feac0e")
-# 
-# #   
-#   
+#Load the dataset for Squamata
+Squamata = vect(file.path(here(), "data", "squamata", "Donnees_Squamata_clean.shp"))
+#Squamata=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Squamata_clean.shp")
+
+#Sanity check: is it the right database?
+dim(Squamata)[1] == 618288
+
+# Add coordinates as data frame columns and subset the dataset
+Squamata %<>% as.data.frame(geom = "XY") %>% 
+  rename(X = x, Y = y) %>% 
+  filter(!datasetKey %in% c("da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                            "f3278405-0943-41a0-9f04-3a7733ec344d",
+                            "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                            "ba8b3250-6115-4680-8c21-6129c35ba738",
+                            "bd067a4c-05b8-4def-925c-60ce83c01891",
+                            "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                            "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                            "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                            "24168b97-a6b0-41cf-9836-29110572efc6",
+                            "45cff797-6ed9-4a25-b659-30aa4caa46f2",
+                            "72ea9678-7174-44c4-9535-de9cb733a15d",
+                            "d3b6cb30-0a64-4f82-91ea-0bb14637ee17",
+                            "faf313a1-9ae4-43f4-bfc9-974281feac0e")) %>% 
+  filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
+  
+# Sanity check: 
+dim(Squamata)[1] == 605504
     
 ##### Mammal data #####   
   
@@ -74,51 +74,48 @@ plan(multicore, workers = 1)
   # Mammal=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Mammal_clean.shp")
   # 
   # Mammal=as.data.frame(Mammal, , geom="XY")
-  # 
-  # colnames(Mammal)[colnames(Mammal) == 'x'] <- 'X'
-  # colnames(Mammal)[colnames(Mammal) == 'y'] <- 'Y'
-  # 
-  # 
-  # Mammal_ready=Mammal[!(Mammal$datasetKey=="8a863029-f435-446a-821e-275f4f641165" & Mammal$countryCod=="NL"),]
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="2dd3b5c1-2a7f-4324-83d3-d05cff85676b")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="37f56892-bd85-479a-803b-7fbfdfd6886c")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="584f899d-a3fd-483a-aba7-514f154feade")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="5e48f65e-bd59-4a14-a21b-fcd761ac380f")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="66e240a7-ae35-4f59-9ad9-c62687015ed8")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="6fc1275d-e647-4e32-835a-3cc94ee2be33")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="72ea9678-7174-44c4-9535-de9cb733a15d")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="7c4c67d2-c554-4f79-b933-89b74873e8b8")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="86cb4fac-86fd-415b-a8f4-1349a3a71c09")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="a4a74db9-fe84-40f3-8782-e4940416076a")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="b4c2c8f8-3526-4873-9867-b28e260a12a0")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="ba8b3250-6115-4680-8c21-6129c35ba738")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="bd067a4c-05b8-4def-925c-60ce83c01891")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="bdb525f6-2087-4f7f-8ab5-b5b052898996")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="c3b0e0ff-def0-40dd-b72d-cbe5e79c1213")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="c6bbb6ef-ad16-4f3c-99e2-f693760173e0")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="cd9e0589-187b-43c0-9692-50d8db7d0467")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="e2544278-4e9d-4c3f-8b44-a05fa07488c6")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="e4af8f92-af98-4649-93ef-83dc99169614")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="ea0b6be3-72eb-41d9-b8cc-e9ae2f53f93e")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="ef2ad061-ab4d-4b5a-b452-04bf4ac078c2")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="f6637736-f04e-4361-87a0-541e08a8a8d3")
-  # Mammal_ready=subset(Mammal_ready, datasetKey!="f9b241f8-900c-4077-ab8a-cca18427fc43")
-  # 
-  # Mammal_ready=subset(Mammal_ready,  species!="Halichoerus grypus")
-  # Mammal_ready=subset(Mammal_ready,  species!="Delphinus delphis")
-  # Mammal_ready=subset(Mammal_ready,  species!="Orcinus orca")
-  # Mammal_ready=subset(Mammal_ready,  species!="Phoca vitulina")
-  # Mammal_ready=subset(Mammal_ready,  species!="Phocoena phocoena")
-  # Mammal_ready=subset(Mammal_ready,  species!="Stenella coeruleoalba")
-  # Mammal_ready=subset(Mammal_ready,  species!="Tursiops truncatus")
-  # Mammal_ready=subset(Mammal_ready,  species!="Homo sapiens")
-  # Mammal_ready=subset(Mammal_ready,  species!="Felis catus")
-  # Mammal_ready=subset(Mammal_ready,  species!="Bos taurus")
+
+#Sanity check: is it the right database?
+#TODO: add the expected number of rows
+#dim(Mammal)[1] == 
 
 
-  
+# Add coordinates as data frame columns 
+# Some datasets are erroneous, they are excluded from the dataset
+# We are not interested in domestic and marine species that are also excluded
+#TODO: explain why!
+Mammal %<>% as.data.frame(geom = "XY") %>% 
+  rename(X = x, Y = y) %>% 
+  filter(!datasetKey %in% c("2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                            "37f56892-bd85-479a-803b-7fbfdfd6886c",
+                            "584f899d-a3fd-483a-aba7-514f154feade",
+                            "5e48f65e-bd59-4a14-a21b-fcd761ac380f",
+                            "66e240a7-ae35-4f59-9ad9-c62687015ed8",
+                            "6fc1275d-e647-4e32-835a-3cc94ee2be33",
+                            "72ea9678-7174-44c4-9535-de9cb733a15d",
+                            "7c4c67d2-c554-4f79-b933-89b74873e8b8",
+                            "86cb4fac-86fd-415b-a8f4-1349a3a71c09",
+                            "a4a74db9-fe84-40f3-8782-e4940416076a",
+                            "b4c2c8f8-3526-4873-9867-b28e260a12a0",
+                            "ba8b3250-6115-4680-8c21-6129c35ba738",
+                            "bd067a4c-05b8-4def-925c-60ce83c01891",
+                            "bdb525f6-2087-4f7f-8ab5-b5b052898996",
+                            "c3b0e0ff-def0-40dd-b72d-cbe5e79c1213",
+                            "c6bbb6ef-ad16-4f3c-99e2-f693760173e0",
+                            "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                            "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                            "e2544278-4e9d-4c3f-8b44-a05fa07488c6",
+                            "e4af8f92-af98-4649-93ef-83dc99169614",
+                            "ea0b6be3-72eb-41d9-b8cc-e9ae2f53f93e",
+                            "ef2ad061-ab4d-4b5a-b452-04bf4ac078c2",
+                            "f3278405-0943-41a0-9f04-3a7733ec344d",
+                            "f6637736-f04e-4361-87a0-541e08a8a8d3",
+                            "f9b241f8-900c-4077-ab8a-cca18427fc43")) %>% 
+  filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL")) %>% 
+  filter(!species %in% c("Halichoerus grypus", "Delphinus delphis", "Orcinus orca",
+                         "Phoca vitulina", "Phocoena phocoena", "Stenella coeruleoalba",
+                         "Tursiops truncatus", "Homo sapiens", "Felis catus", "Bos taurus"))
+
   
   ##### Aves data #####   
   
