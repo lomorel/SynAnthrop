@@ -1,278 +1,246 @@
-## R Markdown
+# SynAnthrop package, draft script written by B. Bongibault
+# available for minor corrections before adding portions to the main vignettes
+# This script is in R format because it is executed on GenOuest's HPC.
 
-library(terra)
+# Load packages
+library(terra) # spatial analyses
 library(sf)                 #for manipulating downloaded maps
 library(tidyverse)          #for tidy analysis
-library(ggplot2)
-library(dplyr)
-library(magrittr)
-library(future.apply)
-library(here)
+library(ggplot2) # draw graphs
+library(dplyr) # pipe %>%, do ctrl+maj+M to compute automatically
+library(magrittr) # "ceci n'est pas un pipe" double pipe %<>%
+library(future.apply) # parallelize computation
+library(here) # path to your files starts where the Rproj file is
 
 plan(multicore, workers = 1)
 
 
-#### Load data #####
+# Load biodiversity data ################################################################
 
-##### Amphibian data #####
-# 
-Amphibian=vect(file.path(here(), "data", "squamata", "Donnees_Squamata_clean.shp"))
+# Select the dataset to use in this instance of Synanthrop 
+# datasets available are: Amphibian, Squamata, Mammal, and Aves
+# Datasets are not available on GitHub, but independently through large file transfers.
+# Add the datasets in the "data" folder of SynAnthrop to run the analysis.
 
-# Amphibian=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Amphibia_clean.shp")
-# Amphibian=as.data.frame(Amphibian, , geom="XY")
-# 
-Amphibian %<>% as.data.frame(geom = "XY") %>%
-  rename(X = x, Y = y) %>% 
-  filter(!datasetKey %in% c("da36b9f6-5acd-4eae-af23-f49be4ed330e",
-                            "f3278405-0943-41a0-9f04-3a7733ec344d",
-                            "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
-                            "ba8b3250-6115-4680-8c21-6129c35ba738",
-                            "bd067a4c-05b8-4def-925c-60ce83c01891",
-                            "cd9e0589-187b-43c0-9692-50d8db7d0467",
-                            "da36b9f6-5acd-4eae-af23-f49be4ed330e",
-                            "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")) %>%
-  filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
+# FOR INTERACTIVE VERSIONS, uncomment this line:
+taxa <- readline(prompt = "Enter the taxa that you want, among Amphibian, Squamata, Mammal, and Aves. The string must match exactly these propositions.")
+# FOR NON-INTERACTIVE VERSIONS, comment the previous line and choose directly the dataset that you want with the following line:
+# taxa = "Squamata" # replace with the dataset name: Amphibian, Squamata, Mammal, or Aves.
 
-# Sanity check: are there the expected number of observations?
-dim(Amphibian_ready)[1] 
+# then execute the next line:
+if (taxa == "Amphibian"){
+  spOcc = vect(file.path(here(), "data", "Amphibia",
+                             "Donnees_Amphibia_clean.shp"))
   
-
-
-##### Squamata data #####
-   
-#Load the dataset for Squamata
-Squamata = vect(file.path(here(), "data", "squamata", "Donnees_Squamata_clean.shp"))
-#Squamata=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Squamata_clean.shp")
-
-#Sanity check: is it the right database?
-dim(Squamata)[1] == 618288
-
-# Add coordinates as data frame columns and subset the dataset
-Squamata %<>% as.data.frame(geom = "XY") %>% 
-  rename(X = x, Y = y) %>% 
-  filter(!datasetKey %in% c("da36b9f6-5acd-4eae-af23-f49be4ed330e",
-                            "f3278405-0943-41a0-9f04-3a7733ec344d",
-                            "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
-                            "ba8b3250-6115-4680-8c21-6129c35ba738",
-                            "bd067a4c-05b8-4def-925c-60ce83c01891",
-                            "cd9e0589-187b-43c0-9692-50d8db7d0467",
-                            "da36b9f6-5acd-4eae-af23-f49be4ed330e",
-                            "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
-                            "24168b97-a6b0-41cf-9836-29110572efc6",
-                            "45cff797-6ed9-4a25-b659-30aa4caa46f2",
-                            "72ea9678-7174-44c4-9535-de9cb733a15d",
-                            "d3b6cb30-0a64-4f82-91ea-0bb14637ee17",
-                            "faf313a1-9ae4-43f4-bfc9-974281feac0e")) %>% 
-  filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
+  # Tidy the dataset for analysis
+  spOcc %<>% as.data.frame(geom = "XY") %>% # add coordinates as columns
+    rename(X = x, Y = y) %>% # change the column names to capital letters
+    # filter out erroneous data identified elsewhere:
+    filter(!datasetKey %in% c("da36b9f6-5acd-4eae-af23-f49be4ed330e", 
+                              "f3278405-0943-41a0-9f04-3a7733ec344d",
+                              "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                              "ba8b3250-6115-4680-8c21-6129c35ba738",
+                              "bd067a4c-05b8-4def-925c-60ce83c01891",
+                              "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                              "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                              "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")) %>%
+    filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
   
-# Sanity check: 
-dim(Squamata)[1] == 605504
+  # Sanity check: are there the expected number of observations after filtering?
+  dim(spOcc)[1]
+  #TODO replace the line above by the line below 
+  # if(dim(spOcc)[1] == **replace this with the number of rows**) { print("Amphibian dataset ready.")} else {print("Error during Amphibian dataset setup. Try again")}
+  
+  
+  
+} else if (taxa == "Squamata"){
+  spOcc = vect(file.path(here(), "data", "squamata", 
+                            "Donnees_Squamata_clean.shp"))
+  
+  # Tidy the dataset for analysis following the same logic as amphibians
+  spOcc %<>% as.data.frame(geom = "XY") %>% 
+    rename(X = x, Y = y) %>% 
+    filter(!datasetKey %in% c("da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                              "f3278405-0943-41a0-9f04-3a7733ec344d",
+                              "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                              "ba8b3250-6115-4680-8c21-6129c35ba738",
+                              "bd067a4c-05b8-4def-925c-60ce83c01891",
+                              "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                              "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                              "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                              "24168b97-a6b0-41cf-9836-29110572efc6",
+                              "45cff797-6ed9-4a25-b659-30aa4caa46f2",
+                              "72ea9678-7174-44c4-9535-de9cb733a15d",
+                              "d3b6cb30-0a64-4f82-91ea-0bb14637ee17",
+                              "faf313a1-9ae4-43f4-bfc9-974281feac0e")) %>% 
+    filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
     
-##### Mammal data #####   
+  # Sanity check: 
+  if(dim(spOcc)[1] == 605504) { print("Squamata dataset ready.")} else {print("Error during Squamata dataset setup. Try again")}
+    
   
-#   Mammal=vect("E:/Synanthrope/Vertebre/Mammal/Donnees_Mammal_clean.shp")
-  # Mammal=vect("/home/genouest/inra_umr0985/bbongibault/Donnees_Mammal_clean.shp")
-  # 
-  # Mammal=as.data.frame(Mammal, , geom="XY")
+} else if (taxa == "Mammal"){
+  spOcc = vect(file.path(here(), "data", "Mammal", 
+                            "Donnees_Mammal_clean.shp"))
+  
+  # Tidy the dataset for analysis following the same logic as amphibians
+  spOcc %<>% as.data.frame(geom = "XY") %>% 
+    rename(X = x, Y = y) %>% 
+    filter(!datasetKey %in% c("2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                              "37f56892-bd85-479a-803b-7fbfdfd6886c",
+                              "584f899d-a3fd-483a-aba7-514f154feade",
+                              "5e48f65e-bd59-4a14-a21b-fcd761ac380f",
+                              "66e240a7-ae35-4f59-9ad9-c62687015ed8",
+                              "6fc1275d-e647-4e32-835a-3cc94ee2be33",
+                              "72ea9678-7174-44c4-9535-de9cb733a15d",
+                              "7c4c67d2-c554-4f79-b933-89b74873e8b8",
+                              "86cb4fac-86fd-415b-a8f4-1349a3a71c09",
+                              "a4a74db9-fe84-40f3-8782-e4940416076a",
+                              "b4c2c8f8-3526-4873-9867-b28e260a12a0",
+                              "ba8b3250-6115-4680-8c21-6129c35ba738",
+                              "bd067a4c-05b8-4def-925c-60ce83c01891",
+                              "bdb525f6-2087-4f7f-8ab5-b5b052898996",
+                              "c3b0e0ff-def0-40dd-b72d-cbe5e79c1213",
+                              "c6bbb6ef-ad16-4f3c-99e2-f693760173e0",
+                              "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                              "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                              "e2544278-4e9d-4c3f-8b44-a05fa07488c6",
+                              "e4af8f92-af98-4649-93ef-83dc99169614",
+                              "ea0b6be3-72eb-41d9-b8cc-e9ae2f53f93e",
+                              "ef2ad061-ab4d-4b5a-b452-04bf4ac078c2",
+                              "f3278405-0943-41a0-9f04-3a7733ec344d",
+                              "f6637736-f04e-4361-87a0-541e08a8a8d3",
+                              "f9b241f8-900c-4077-ab8a-cca18427fc43")) %>% 
+    filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL")) %>% 
+    # plus, we are not interested in domestic and marine species that are also excluded
+    filter(!species %in% c("Halichoerus grypus", "Delphinus delphis", "Orcinus orca",
+                           "Phoca vitulina", "Phocoena phocoena", "Stenella coeruleoalba",
+                           "Tursiops truncatus", "Homo sapiens", "Felis catus", "Bos taurus"))
+  
+  # Sanity check: 
+  dim(spOcc)[1]
+  #TODO replace the line above by the line below 
+  # if(dim(spOcc)[1] == **replace this with the number of rows**) { print("Mammal dataset ready.")} else {print("Error during Mammal dataset setup. Try again")}
+  
+  
+  
+} else if (taxa == "Aves"){  
+  spOcc = vect(file.path(here(), "data", "Aves", 
+                          "Donnees_Aves_clean.shp"))
+  
+  # Tidy the dataset for analysis following the same logic as amphibians
+  spOcc %<>% as.data.frame(geom = "XY") %>% 
+    rename(X = decimalLongitude, Y = decimalLatitude,
+           individual = individualCount,
+           countryCod = countryCode,
+           coordinate = coordinateUncertaintyInMeters) %>% 
+    filter(taxonRank == "SPECIES" & occurrenceStatus == "PRESENT") %>% # keep only presences at the species level
+    filter(month != 7) %>%  #TODO: Baptiste, I don't know what this is for 
+    filter(!datasetKey %in% c("2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                         "37f56892-bd85-479a-803b-7fbfdfd6886c",
+                         "584f899d-a3fd-483a-aba7-514f154feade",
+                         "5e48f65e-bd59-4a14-a21b-fcd761ac380f",
+                         "66e240a7-ae35-4f59-9ad9-c62687015ed8",
+                         "6fc1275d-e647-4e32-835a-3cc94ee2be33",
+                         "72ea9678-7174-44c4-9535-de9cb733a15d",
+                         "7c4c67d2-c554-4f79-b933-89b74873e8b8",
+                         "86cb4fac-86fd-415b-a8f4-1349a3a71c09",
+                         "a4a74db9-fe84-40f3-8782-e4940416076a",
+                         "b4c2c8f8-3526-4873-9867-b28e260a12a0",
+                         "ba8b3250-6115-4680-8c21-6129c35ba738",
+                         "bd067a4c-05b8-4def-925c-60ce83c01891",
+                         "bdb525f6-2087-4f7f-8ab5-b5b052898996",
+                         "c3b0e0ff-def0-40dd-b72d-cbe5e79c1213",
+                         "c6bbb6ef-ad16-4f3c-99e2-f693760173e0",
+                         "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                         "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                         "e2544278-4e9d-4c3f-8b44-a05fa07488c6",
+                         "e4af8f92-af98-4649-93ef-83dc99169614",
+                         "ea0b6be3-72eb-41d9-b8cc-e9ae2f53f93e",
+                         "ef2ad061-ab4d-4b5a-b452-04bf4ac078c2",
+                         "f3278405-0943-41a0-9f04-3a7733ec344d",
+                         "f6637736-f04e-4361-87a0-541e08a8a8d3",
+                         "f9b241f8-900c-4077-ab8a-cca18427fc43",
+                         
+                         "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                         "f3278405-0943-41a0-9f04-3a7733ec344d",
+                         "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                         "ba8b3250-6115-4680-8c21-6129c35ba738",
+                         "bd067a4c-05b8-4def-925c-60ce83c01891",
+                         "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                         "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                         "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                         
+                         "24168b97-a6b0-41cf-9836-29110572efc6",
+                         "45cff797-6ed9-4a25-b659-30aa4caa46f2",
+                         "72ea9678-7174-44c4-9535-de9cb733a15d",
+                         "d3b6cb30-0a64-4f82-91ea-0bb14637ee17",
+                         
+                         "faf313a1-9ae4-43f4-bfc9-974281feac0e",
+                         "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                         "f3278405-0943-41a0-9f04-3a7733ec344d",
+                         "2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
+                         "ba8b3250-6115-4680-8c21-6129c35ba738",
+                         "bd067a4c-05b8-4def-925c-60ce83c01891",
+                         "cd9e0589-187b-43c0-9692-50d8db7d0467",
+                         "da36b9f6-5acd-4eae-af23-f49be4ed330e",
+                         "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
+                         
+                         "c6bbb6ef-ad16-4f3c-99e2-f693760173e0",
+                         "acf7b380-2e9d-42d2-b1f8-a802a5e9d90a",
+                         "a0ee69cf-df3b-44d7-8b14-19c42a1532a0",
+                         "857bce66-f762-11e1-a439-00145eb45e9a",
+                         "75214a8e-445a-4785-857e-5d1e06b9150d",
+                         "4921f3f7-0991-49f4-8f56-91e7b9a55bf3",
+                         "f3278405-0943-41a0-9f04-3a7733ec344d",
+                         "857bce66-f762-11e1-a439-00145eb45e9a",
+                         "37f56892-bd85-479a-803b-7fbfdfd6886c")) %>% 
+    filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL")) %>% 
+    
+      
+  #TODO: Code remnant: Baptiste I don't know what this is for; columns can be selected with:
+  # select(columnName, columnName, columnName) %>% 
+  # it improves reproducibility if the column order changes
+  spOcc = spocc[,c(1:2,4,6:11)]
 
-#Sanity check: is it the right database?
-#TODO: add the expected number of rows
-#dim(Mammal)[1] == 
+  # Sanity check: 
+  dim(spOcc)[1]
+  #TODO replace the line above by the line below 
+  # if(dim(spOcc)[1] == **replace this with the number of rows**) { print("Aves dataset ready.")} else {print("Error during Aves dataset setup. Try again")}
+  
+  
+} else {print("Sorry, your query did not match any of the taxa offered by SynAnthrop. Try again.")}
 
 
-# Add coordinates as data frame columns 
-# Some datasets are erroneous, they are excluded from the dataset
-# We are not interested in domestic and marine species that are also excluded
-#TODO: explain why!
-Mammal %<>% as.data.frame(geom = "XY") %>% 
-  rename(X = x, Y = y) %>% 
-  filter(!datasetKey %in% c("2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
-                            "37f56892-bd85-479a-803b-7fbfdfd6886c",
-                            "584f899d-a3fd-483a-aba7-514f154feade",
-                            "5e48f65e-bd59-4a14-a21b-fcd761ac380f",
-                            "66e240a7-ae35-4f59-9ad9-c62687015ed8",
-                            "6fc1275d-e647-4e32-835a-3cc94ee2be33",
-                            "72ea9678-7174-44c4-9535-de9cb733a15d",
-                            "7c4c67d2-c554-4f79-b933-89b74873e8b8",
-                            "86cb4fac-86fd-415b-a8f4-1349a3a71c09",
-                            "a4a74db9-fe84-40f3-8782-e4940416076a",
-                            "b4c2c8f8-3526-4873-9867-b28e260a12a0",
-                            "ba8b3250-6115-4680-8c21-6129c35ba738",
-                            "bd067a4c-05b8-4def-925c-60ce83c01891",
-                            "bdb525f6-2087-4f7f-8ab5-b5b052898996",
-                            "c3b0e0ff-def0-40dd-b72d-cbe5e79c1213",
-                            "c6bbb6ef-ad16-4f3c-99e2-f693760173e0",
-                            "cd9e0589-187b-43c0-9692-50d8db7d0467",
-                            "dd915a74-f2d2-4888-a62d-4a5ebeae4e0e",
-                            "e2544278-4e9d-4c3f-8b44-a05fa07488c6",
-                            "e4af8f92-af98-4649-93ef-83dc99169614",
-                            "ea0b6be3-72eb-41d9-b8cc-e9ae2f53f93e",
-                            "ef2ad061-ab4d-4b5a-b452-04bf4ac078c2",
-                            "f3278405-0943-41a0-9f04-3a7733ec344d",
-                            "f6637736-f04e-4361-87a0-541e08a8a8d3",
-                            "f9b241f8-900c-4077-ab8a-cca18427fc43")) %>% 
-  filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL")) %>% 
-  filter(!species %in% c("Halichoerus grypus", "Delphinus delphis", "Orcinus orca",
-                         "Phoca vitulina", "Phocoena phocoena", "Stenella coeruleoalba",
-                         "Tursiops truncatus", "Homo sapiens", "Felis catus", "Bos taurus"))
+# Homogenize column names with expectations of SynAnthrop function
+spOcc %<>% rename(Species = species,
+                 Abundance = individual,
+                 Year = year)
 
-  
-  ##### Aves data #####   
-  
-  #   Aves=vect("E:/Synanthrope/Vertebre/Aves/Donnees_Aves_clean.shp")
-  Aves=read.table("/scratch/bbongibault/occurrence_selected_coordcleaned_spring.csv", sep=";",dec=".", na=" ", header = T, stringsAsFactors = T)
-  # Aves=read.table("E:/Synanthrope/Vertebre/Aves/occurrence_selected_coordcleaned_spring.csv", sep=";", nrow= 800000, dec=".", na=" ", header = T, stringsAsFactors = T)
-  
-  # Aves=as.data.frame(Aves, , geom="XY")
-  
-  colnames(Aves)[colnames(Aves) == 'decimalLongitude'] <- 'X'
-  colnames(Aves)[colnames(Aves) == 'decimalLatitude'] <- 'Y'
-  colnames(Aves)[colnames(Aves) == 'individualCount'] <- 'individual'
-  colnames(Aves)[colnames(Aves) == 'countryCode'] <- 'countryCod'
-  colnames(Aves)[colnames(Aves) == 'coordinateUncertaintyInMeters'] <- 'coordinate'
-  
-  Aves <- Aves[Aves$taxonRank == "SPECIES", ] ## Delete for example Genus occurrence and Subspecies occurrence
-  Aves <- Aves[Aves$occurrenceStatus == "PRESENT", ] ## Keep only presence occurrence
-  Aves<- Aves[Aves$month != 7, ]
-  Aves = Aves[,c(1:2,4,6:11)]
-  
-  Aves_ready=Aves[!(Aves$datasetKey=="8a863029-f435-446a-821e-275f4f641165" & Aves$countryCod=="NL"),]
-  Aves_ready=subset(Aves_ready, datasetKey!="2dd3b5c1-2a7f-4324-83d3-d05cff85676b")
-  Aves_ready=subset(Aves_ready, datasetKey!="37f56892-bd85-479a-803b-7fbfdfd6886c")
-  Aves_ready=subset(Aves_ready, datasetKey!="584f899d-a3fd-483a-aba7-514f154feade")
-  Aves_ready=subset(Aves_ready, datasetKey!="5e48f65e-bd59-4a14-a21b-fcd761ac380f")
-  Aves_ready=subset(Aves_ready, datasetKey!="66e240a7-ae35-4f59-9ad9-c62687015ed8")
-  Aves_ready=subset(Aves_ready, datasetKey!="6fc1275d-e647-4e32-835a-3cc94ee2be33")
-  Aves_ready=subset(Aves_ready, datasetKey!="72ea9678-7174-44c4-9535-de9cb733a15d")
-  Aves_ready=subset(Aves_ready, datasetKey!="7c4c67d2-c554-4f79-b933-89b74873e8b8")
-  Aves_ready=subset(Aves_ready, datasetKey!="86cb4fac-86fd-415b-a8f4-1349a3a71c09")
-  Aves_ready=subset(Aves_ready, datasetKey!="a4a74db9-fe84-40f3-8782-e4940416076a")
-  Aves_ready=subset(Aves_ready, datasetKey!="b4c2c8f8-3526-4873-9867-b28e260a12a0")
-  Aves_ready=subset(Aves_ready, datasetKey!="ba8b3250-6115-4680-8c21-6129c35ba738")
-  Aves_ready=subset(Aves_ready, datasetKey!="bd067a4c-05b8-4def-925c-60ce83c01891")
-  Aves_ready=subset(Aves_ready, datasetKey!="bdb525f6-2087-4f7f-8ab5-b5b052898996")
-  Aves_ready=subset(Aves_ready, datasetKey!="c3b0e0ff-def0-40dd-b72d-cbe5e79c1213")
-  Aves_ready=subset(Aves_ready, datasetKey!="c6bbb6ef-ad16-4f3c-99e2-f693760173e0")
-  Aves_ready=subset(Aves_ready, datasetKey!="cd9e0589-187b-43c0-9692-50d8db7d0467")
-  Aves_ready=subset(Aves_ready, datasetKey!="dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")
-  Aves_ready=subset(Aves_ready, datasetKey!="e2544278-4e9d-4c3f-8b44-a05fa07488c6")
-  Aves_ready=subset(Aves_ready, datasetKey!="e4af8f92-af98-4649-93ef-83dc99169614")
-  Aves_ready=subset(Aves_ready, datasetKey!="ea0b6be3-72eb-41d9-b8cc-e9ae2f53f93e")
-  Aves_ready=subset(Aves_ready, datasetKey!="ef2ad061-ab4d-4b5a-b452-04bf4ac078c2")
-  Aves_ready=subset(Aves_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-  Aves_ready=subset(Aves_ready, datasetKey!="f6637736-f04e-4361-87a0-541e08a8a8d3")
-  Aves_ready=subset(Aves_ready, datasetKey!="f9b241f8-900c-4077-ab8a-cca18427fc43")
-
-  Aves_ready=subset(Aves_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-  Aves_ready=subset(Aves_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-  Aves_ready=subset(Aves_ready, datasetKey!="2dd3b5c1-2a7f-4324-83d3-d05cff85676b")
-  Aves_ready=subset(Aves_ready, datasetKey!="ba8b3250-6115-4680-8c21-6129c35ba738")
-  Aves_ready=subset(Aves_ready, datasetKey!="bd067a4c-05b8-4def-925c-60ce83c01891")
-  Aves_ready=subset(Aves_ready, datasetKey!="cd9e0589-187b-43c0-9692-50d8db7d0467")
-  Aves_ready=subset(Aves_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-  Aves_ready=subset(Aves_ready, datasetKey!="dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")
-
-  Aves_ready=subset(Aves_ready, datasetKey!="24168b97-a6b0-41cf-9836-29110572efc6")
-  Aves_ready=subset(Aves_ready, datasetKey!="45cff797-6ed9-4a25-b659-30aa4caa46f2")
-  Aves_ready=subset(Aves_ready, datasetKey!="72ea9678-7174-44c4-9535-de9cb733a15d")
-  Aves_ready=subset(Aves_ready, datasetKey!="d3b6cb30-0a64-4f82-91ea-0bb14637ee17")
-
-  Aves_ready=subset(Aves_ready, datasetKey!="faf313a1-9ae4-43f4-bfc9-974281feac0e")
-  Aves_ready=subset(Aves_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-  Aves_ready=subset(Aves_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-  Aves_ready=subset(Aves_ready, datasetKey!="2dd3b5c1-2a7f-4324-83d3-d05cff85676b")
-  Aves_ready=subset(Aves_ready, datasetKey!="ba8b3250-6115-4680-8c21-6129c35ba738")
-  Aves_ready=subset(Aves_ready, datasetKey!="bd067a4c-05b8-4def-925c-60ce83c01891")
-  Aves_ready=subset(Aves_ready, datasetKey!="cd9e0589-187b-43c0-9692-50d8db7d0467")
-  Aves_ready=subset(Aves_ready, datasetKey!="da36b9f6-5acd-4eae-af23-f49be4ed330e")
-  Aves_ready=subset(Aves_ready, datasetKey!="dd915a74-f2d2-4888-a62d-4a5ebeae4e0e")
-
-  Aves_ready=subset(Aves_ready, datasetKey!="c6bbb6ef-ad16-4f3c-99e2-f693760173e0")
-  Aves_ready=subset(Aves_ready, datasetKey!="acf7b380-2e9d-42d2-b1f8-a802a5e9d90a")
-  Aves_ready=subset(Aves_ready, datasetKey!="a0ee69cf-df3b-44d7-8b14-19c42a1532a0")
-  Aves_ready=subset(Aves_ready, datasetKey!="857bce66-f762-11e1-a439-00145eb45e9a")
-  Aves_ready=subset(Aves_ready, datasetKey!="75214a8e-445a-4785-857e-5d1e06b9150d")
-  Aves_ready=subset(Aves_ready, datasetKey!="4921f3f7-0991-49f4-8f56-91e7b9a55bf3")
-  Aves_ready=subset(Aves_ready, datasetKey!="f3278405-0943-41a0-9f04-3a7733ec344d")
-  Aves_ready=subset(Aves_ready, datasetKey!="857bce66-f762-11e1-a439-00145eb45e9a")
-  Aves_ready=subset(Aves_ready, datasetKey!="37f56892-bd85-479a-803b-7fbfdfd6886c")
-  
-  
-##### Anthropization data #####
-  
-  
-  # load the raster file
-  ras_raw <- raster::raster("/home/genouest/inra_umr0985/bbongibault/HFP_2020_europe2b.tif")
-  # ras_raw <- raster::raster("E:/Synanthrope/HFP_2020_europe2b.tif")
-   
-  # create an object to visualize the raster
-  rast_to_plot <- terra::rast(ras_raw)
-  terra::crs(rast_to_plot) <- "EPSG:4326"
-  rm(ras_raw)
-  
-
-##### Data for Synanthrop #####
-
-  # spOcc <- Amphibian_ready
-  
-  # spOcc <- Squamata_ready
-  
-  # spOcc <- Mammal_ready
-  
-  ##Pour oiseaux
-  spOcc <- Aves_ready
-  ##
-  
-
-  colnames(spOcc)[colnames(spOcc) == 'species'] <- 'Species'
-  colnames(spOcc)[colnames(spOcc) == 'individual'] <- 'Abundance'
-  colnames(spOcc)[colnames(spOcc) == 'year'] <- 'Year'
-  
-  
-  # look at data structure
-  head(spOcc)
-  summary(as.factor(spOcc$Species))
-   
-  
-  
-  
-  
-  spOcc$Species=as.factor(spOcc$Species)
-  
-  ## Grouper le data frame par la colonne 'group'
-  grouped_df <- spOcc %>% group_by(Species)
-  
-  ## Calculer la moyenne de la colonne 'value' pour chaque groupe
-  sum_values <- grouped_df %>% summarise(somme_value = sum(Abundance))
-  
-  ## Afficher le résultat
-  print(sum_values)
-  
-
-#
-sum_values$Species=as.character(sum_values$Species)
-Sp30=c()
-for(i in 1:nrow(sum_values)){
-  if(sum_values$somme_value[i]<30){
-    Sp30=c(Sp30,sum_values$Species[i])
-  }
-}
-# print(Sp30)
- 
+# Species with very few individuals cannot be evaluated statistically with SynAnthrop.
+# Discard species with fewer than the threshold number of individuals in the dataset.
+# Calculate the total number of individuals found per species (sum of "Abundance")
+threshold = 30 # we want at least *threshold* individuals per species
+spOcc %<>% 
+  group_by(Species) %>% #group per species
+  filter(sum(Abundance) >= threshold)  %>% #keep species with >= 30 individuals
+  ungroup()
 
 
 
 
-spOcc30=spOcc
 
-for (i in 1:length(Sp30)){
-  spOcc30=subset(spOcc30, spOcc30$Species!=Sp30[i], drop=TRUE)
-}
 
-spOcc30=droplevels(spOcc30)
+## Load anthropization data #####
+# load the raster file
+ras_raw <- raster::raster(file.path(here(), "data", "HFP_2020_europe2b.tif"))
 
-# print(spOcc30)
- 
+# create an object to visualize the raster
+rast_to_plot <- terra::rast(ras_raw)
+terra::crs(rast_to_plot) <- "EPSG:4326" # select the correct crs
+rm(ras_raw) # remove the original object
+
+
 
 
 #### Faire tourner la fonction SynAnthrop
@@ -282,7 +250,7 @@ spOcc30=droplevels(spOcc30)
 
  
 r = rast_to_plot
-data = spOcc30
+data = spOcc
 value = resolution = 10
 sim = 100
 threshold = 100
