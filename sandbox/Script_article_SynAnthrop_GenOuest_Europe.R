@@ -2,7 +2,8 @@
 # available for minor corrections before adding portions to the main vignettes
 # This script is in R format because it is executed on GenOuest's HPC.
 
-# Load packages
+
+# Package loading #############################################################
 library(terra) # spatial analyses
 library(sf)                 #for manipulating downloaded maps
 library(tidyverse)          #for tidy analysis
@@ -15,7 +16,8 @@ library(here) # path to your files starts where the Rproj file is
 plan(multicore, workers = 1)
 
 
-# Load biodiversity data ################################################################
+# Data loading #################################################################
+## Biodiversity data ###########################################################
 
 # Select the dataset to use in this instance of Synanthrop 
 # datasets available are: Amphibian, Squamata, Mammal, and Aves
@@ -227,31 +229,21 @@ spOcc %<>%
   ungroup()
 
 
+## Anthropization data ##########################################################
+# load the raster file, that is in EPSG:3857
+# r3857 <- terra::rast(file.path(here(), "data", "HFP_2020_europe2b.tif"))
+# project it into EPSG:3035 for distance calculations
+# r <- terra::project(ras_3857, "EPSG:3035")
+
+# changing projection takes a long time; shortcut to this projected layer
+r <- terra::rast(file.path(here(), "data", "r_repro.tif"))
 
 
 
 
-## Load anthropization data #####
-# load the raster file
-ras_raw <- raster::raster(file.path(here(), "data", "HFP_2020_europe2b.tif"))
-
-# create an object to visualize the raster
-rast_to_plot <- terra::rast(ras_raw)
-terra::crs(rast_to_plot) <- "EPSG:4326" # select the correct crs
-rm(ras_raw) # remove the original object
-
-
-
-
-#### Faire tourner la fonction SynAnthrop
-
-##### Fonction manuelle
-
-
- 
-r = rast_to_plot
-data = spOcc
-value = resolution = 10
+# Run SynAnthrop  ##############################################################
+# the files available are: spOcc (biodiversity dataframe) and r (anthropization raster)
+resolution = 10
 sim = 100
 threshold = 100
 
@@ -262,20 +254,15 @@ samplesList <-  NULL # store all samples drawn and observed
 
 
  
-
-
-  # STEP 1bis (changement echelle) | Naturalness raster file: Aggregate cells at desired resolution ####
- 
-# STEP 1bis | Naturalness raster file: Aggregate cells at desired resolution ####
-value=resolution
+# STEP 1 | Aggregate raster cells at desired resolution ####
 # raw raster files may be too large for the intended analysis. Cells are aggregated
 # to decrease the file complexity.
-cat(paste(Sys.time(), "- Aggregate naturalness raster cells at resolution", value, 
+cat(paste(Sys.time(), "- Aggregate naturalness raster cells at resolution", resolution, 
           "(this step may take a few minutes)\n"))
 # aggregate raster cells at defined resolution
 
 
-
+#TODO: Baptiste can you please comment this section from here until the /TODO?
 #### Methode avec 1 SpatVector avec différents polygones emprises :
 
 # scale=vect("E:/Region_FR.shp")
@@ -323,8 +310,7 @@ if(is.null(scale)==F){
       r_crop = mask(r_crop, scale_curr)
       # plot(r_crop)
       
-      cat(paste(Sys.time(), "- Aggregate naturalness raster cells at resolution", value, 
-                "(this step may take a few minutes)\n\n"))
+
       
       ras_reproj <- terra::aggregate(r_crop, fact = value, fun = mean, na.rm = T)
       
@@ -334,7 +320,8 @@ if(is.null(scale)==F){
       
       ras <- terra::project(ras_reproj, "EPSG:4326")
       names(ras)="value"
-      
+ 
+#/TODO end of Baptiste TODO     
       
       # Extract naturalness raster values associated with each cell
       ras.value <- data.frame(value = terra::values(ras)) 
@@ -344,7 +331,7 @@ if(is.null(scale)==F){
         na.omit() 
 
 
-      # STEP 2 | Dataset: calculate sampling effort per cell ####
+# STEP 2 | Dataset: calculate sampling effort per cell ####
       
       # we calculate the number of times each cell was visited per year and in total
       # in order to obtain an index of sampling effort. Sampling effort is linked with
@@ -423,7 +410,7 @@ if(is.null(scale)==F){
       
       
       
-      # STEP 3alpha | Dataset: creation of artificial species ####
+# STEP 3alpha | Dataset: creation of artificial species ####
       
    
       #Calcul des quantiles pour créer une espèce artificielle synanthrope et une espèce artificielle anthropophobe afin de fixer les valeurs extrêmes de l'index        
@@ -517,7 +504,7 @@ if(is.null(scale)==F){
       rm(cell_ant)
       rm(cell_syn)
       
-      # STEP 3 | Dataset: identify species to evaluate ####
+# STEP 3 | Dataset: identify species to evaluate ####
       
       # Species seldom detected will produce unreliable synanthropy scores. 
       # We will only evaluate the synanthropy score of species that have been detected 
