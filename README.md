@@ -19,7 +19,7 @@ The analysis is based on the comparison of the observed distribution of species 
 ### If you wish to visualize the SSI tutorial only
 
 2 options:  
-* Access the "Articles" tab of <a href= "https://lomorel.github.io/SynAnthrop">the SynAnthrop GitHub site</a>  
+* Access it directly <a href="https://lomorel.github.io/SynAnthrop/articles/01_SSI_SCI_Brittany.html">here</a> or through the "Articles" tab of <a href= "https://lomorel.github.io/SynAnthrop">the SynAnthrop GitHub site</a>  
 * Download the PDF tutorial in the vignettes folder of <a href= "https://github.com/lomorel/SynAnthrop/">the SynAnthrop GitHub repository</a>  
 
 
