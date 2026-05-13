@@ -306,7 +306,7 @@ scale <- svc(c(
       # Convert to the working crs if necessary
       if (st_crs(scale_curr) != st_crs(r_repro)) { 
         scale_curr<- terra::project(scale_curr, crs(r_repro))
-
+      }
         
 # STEP 1 | Aggregate raster cells at desired resolution ####
         # raw raster files may be too large for the intended analysis. Cells are aggregated
@@ -812,10 +812,10 @@ scale <- svc(c(
       
       cat(paste(Sys.time(), "All done.\n"))
       return(results1)
-    }
+    })
     
     
-  }
+  # }
   
 
 # 
