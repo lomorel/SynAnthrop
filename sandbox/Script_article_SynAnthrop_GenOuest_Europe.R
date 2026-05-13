@@ -248,6 +248,7 @@ samplesList <-  NULL # store all samples drawn and observed
  
 # STEP 1: Define spatial extent for analysis #################################
 # Three types of spatial extents are authorized: none, polygons, or files
+# 
 # 1. the entire space available, without cropping
 scale <- terra::svc(c(NULL)) 
 
@@ -270,7 +271,7 @@ names = scale$short_name
 
 # here, a single polygon for Brittany
 scale = vect(file.path(here(), "data", "Bretagne_shapefile.shp"))
-
+names = "Brittany"
 
 
 # 3. collections of different shapefiles (SpatVectorCollection)
@@ -278,12 +279,16 @@ scaleType = "files"
 Brittany = vect(file.path(here(), "data", "Bretagne_shapefile.shp"))
 France = vect(file.path(here(), "data", "Region_FR.shp"))
 Europe = vect(file.path(here(), "data", "Europe_countries.shp"))
+Biogeo = vect(file.path(here(), "data", "BiogeoRegions2016.shp"))
+
 scale <- svc(c(
   Brittany = Brittany,
   France   = France,
-  Europe   = Europe
+  Europe   = Europe,
+  Biogeo = Biogeo,
 ))
 
+names=list("Brittany", France$DREG_L_LIB, Europe$NAME_FREN, Biogeo$short_name)
 
 
 # THIS IS SYNANTHROP
@@ -300,9 +305,15 @@ scale <- svc(c(
       # now run on the scale that has been defined
       results1 <- lapply(1:length(scale), function(nb_scale){
       
-      # change message to fit both options  
-      cat(paste('Synanthrop processing for "', names[nb_scale], '" scale\n\n'))
-      
+      # change message to fit both options
+          # if(scaleType=="files"){
+          #   cat(paste('Synanthrop processing for "', names[[**mettre l'objet qui stock le numéro du fichier de la liste]][nb_scale],'" scale\n\n'))
+          # }else{
+            cat(paste('Synanthrop processing for "', names[nb_scale],'" scale\n\n'))
+          # }
+            
+        
+        
       # Convert to the working crs if necessary
       if (st_crs(scale_curr) != st_crs(r_repro)) { 
         scale_curr<- terra::project(scale_curr, crs(r_repro))
