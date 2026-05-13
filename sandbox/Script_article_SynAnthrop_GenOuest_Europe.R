@@ -49,9 +49,7 @@ if (taxa == "Amphibian"){
     filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL"))
   
   # Sanity check: are there the expected number of observations after filtering?
-  dim(spOcc)[1]
-  #TODO replace the line above by the line below 
-  # if(dim(spOcc)[1] == **replace this with the number of rows**) { print("Amphibian dataset ready.")} else {print("Error during Amphibian dataset setup. Try again")}
+  if(dim(spOcc)[1] == 696879) { print("Amphibian dataset ready.")} else {print("Error during Amphibian dataset setup. Try again")}
   
   
   
@@ -120,9 +118,7 @@ if (taxa == "Amphibian"){
                            "Tursiops truncatus", "Homo sapiens", "Felis catus", "Bos taurus"))
   
   # Sanity check: 
-  dim(spOcc)[1]
-  #TODO replace the line above by the line below 
-  # if(dim(spOcc)[1] == **replace this with the number of rows**) { print("Mammal dataset ready.")} else {print("Error during Mammal dataset setup. Try again")}
+  if(dim(spOcc)[1] == 2707440) { print("Mammal dataset ready.")} else {print("Error during Mammal dataset setup. Try again")}
   
   
   
@@ -137,7 +133,6 @@ if (taxa == "Amphibian"){
            countryCod = countryCode,
            coordinate = coordinateUncertaintyInMeters) %>% 
     filter(taxonRank == "SPECIES" & occurrenceStatus == "PRESENT") %>% # keep only presences at the species level
-    filter(month != 7) %>%  #TODO: Baptiste, I don't know what this is for 
     filter(!datasetKey %in% c("2dd3b5c1-2a7f-4324-83d3-d05cff85676b",
                          "37f56892-bd85-479a-803b-7fbfdfd6886c",
                          "584f899d-a3fd-483a-aba7-514f154feade",
@@ -200,15 +195,11 @@ if (taxa == "Amphibian"){
     filter(!(datasetKey == "8a863029-f435-446a-821e-275f4f641165" & countryCod == "NL")) %>% 
     
       
-  #TODO: Code remnant: Baptiste I don't know what this is for; columns can be selected with:
-  # select(columnName, columnName, columnName) %>% 
-  # it improves reproducibility if the column order changes
-  spOcc = spocc[,c(1:2,4,6:11)]
+  
+  spOcc = spocc%>% select(datasetKey, species, countryCod, individual, Y, X, coordinate, month, year ) 
 
   # Sanity check: 
-  dim(spOcc)[1]
-  #TODO replace the line above by the line below 
-  # if(dim(spOcc)[1] == **replace this with the number of rows**) { print("Aves dataset ready.")} else {print("Error during Aves dataset setup. Try again")}
+  if(dim(spOcc)[1] == 93058882) { print("Aves dataset ready.")} else {print("Error during Aves dataset setup. Try again")}
   
   
 } else {print("Sorry, your query did not match any of the taxa offered by SynAnthrop. Try again.")}
@@ -258,11 +249,11 @@ samplesList <-  NULL # store all samples drawn and observed
 # STEP 1: Define spatial extent for analysis #################################
 # Three types of spatial extents are authorized: none, polygons, or files
 # 1. the entire space available, without cropping
-scale <- terra::svc(c(NULL))
+scale <- terra::svc(c(NULL)) 
 
 # 2. Polygon(s) within a shapefile
-# here, French regions
 scaleType = "polygons"
+# here, French regions
 France = vect(file.path(here(), "data", "Region_FR.shp"))
 names = scale$DREG_L_LIB # names of the polygons
 scale <- svc(c(
@@ -273,8 +264,13 @@ scale <- svc(c(
 scale = vect(file.path(here(), "data", "Europe_countries.shp"))
 names = scale$NAME_FREN
 
+# here, Biogeographical european regions
+scale = vect(file.path(here(), "data", "BiogeoRegions2016.shp"))
+names = scale$short_name
+
 # here, a single polygon for Brittany
 scale = vect(file.path(here(), "data", "Bretagne_shapefile.shp"))
+
 
 
 # 3. collections of different shapefiles (SpatVectorCollection)
